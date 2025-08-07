@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/utils/supabase'
-import { decryptPassword } from '@/utils/encryption'
 import { EVALUE8_ENDPOINTS } from '@/utils/constants'
 
 export async function POST(request: NextRequest) {
@@ -37,13 +36,15 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
-    // Decrypt password
-    const password = decryptPassword(config.password_encrypted)
-
     // Build API request parameters
-    const baseUrl = config.environment === 'live' 
+    // Temporarily force live environment since sandbox returns 404
+    const useEnvironment = 'live' // Force live environment for now
+    const baseUrl = useEnvironment === 'live' 
       ? 'https://www.evalue8.co.za/evalue8webservice/'
       : 'https://www.evalue8.co.za/evalue8webservice/sandbox/'
+    
+    console.log('Valuation request - Config environment:', config.environment, 'Using:', useEnvironment)
+    console.log('Valuation params:', { mmCode, mmYear, condition, mileage })
 
     const params = new URLSearchParams({
       mmCode: mmCode,
@@ -51,11 +52,11 @@ export async function POST(request: NextRequest) {
       soft: config.app_name,
       comid: config.computer_name,
       uname: config.username,
-      password: password,
+      password: config.password_encrypted, // Use stored password directly for now
       clientref: config.client_ref,
       condition: condition,
       mileage: mileage,
-      credentials: config.environment
+      credentials: useEnvironment
     })
 
     // Add accessories if provided
@@ -64,16 +65,25 @@ export async function POST(request: NextRequest) {
     }
 
     // Make API request
-    const response = await fetch(`${baseUrl}${EVALUE8_ENDPOINTS.VALUATION}?${params}`)
+    const apiUrl = `${baseUrl}${EVALUE8_ENDPOINTS.VALUATION}?${params}`
+    console.log('Valuation API URL:', apiUrl.replace(/password=[^&]*/g, 'password=***'))
+    
+    const response = await fetch(apiUrl)
+    console.log('Valuation API response status:', response.status)
     
     if (!response.ok) {
+      console.log('Valuation API error:', response.status, response.statusText)
+      const errorText = await response.text()
+      console.log('Valuation API error response:', errorText)
       return NextResponse.json({
         success: false,
-        error: `API request failed: ${response.status} ${response.statusText}`
+        error: `API request failed: ${response.status} ${response.statusText}`,
+        details: errorText
       }, { status: 500 })
     }
 
     const apiData = await response.json()
+    console.log('Valuation API data result:', apiData.result)
 
     if (apiData.result !== 0) {
       return NextResponse.json({
