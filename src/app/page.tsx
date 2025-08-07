@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import VehicleSelector from '@/components/VehicleSelector'
 import AccessorySelector from '@/components/AccessorySelector'
 import ValuationResults from '@/components/ValuationResults'
@@ -18,6 +18,19 @@ export default function Home() {
     environment: 'live',
     configured: false
   })
+
+  // Load configuration from localStorage on component mount
+  useEffect(() => {
+    const savedConfig = localStorage.getItem('opendrive_config')
+    if (savedConfig) {
+      try {
+        const parsedConfig = JSON.parse(savedConfig)
+        setApiConfig(parsedConfig)
+      } catch (error) {
+        console.error('Error parsing saved config:', error)
+      }
+    }
+  }, [])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-800 via-slate-700 to-slate-500">
