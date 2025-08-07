@@ -2,6 +2,15 @@ import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/utils/supabase'
 import { EVALUE8_ENDPOINTS } from '@/utils/constants'
 
+// Simple GET endpoint to test if the API route is working
+export async function GET() {
+  return NextResponse.json({
+    success: true,
+    message: 'API test endpoint is working',
+    timestamp: new Date().toISOString()
+  })
+}
+
 export async function POST(request: NextRequest) {
   try {
     console.log('=== API test endpoint called ===')
@@ -14,8 +23,19 @@ export async function POST(request: NextRequest) {
       }, { status: 500 })
     }
 
-    const body = await request.json()
-    console.log('Request body received:', JSON.stringify(body, null, 2))
+    let body
+    try {
+      body = await request.json()
+      console.log('Request body received:', JSON.stringify(body, null, 2))
+    } catch (parseError) {
+      console.log('ERROR: Failed to parse JSON body:', parseError)
+      return NextResponse.json({
+        success: false,
+        error: 'Invalid JSON in request body',
+        details: (parseError as Error).message
+      }, { status: 400 })
+    }
+
     const { environment = 'live', username, password } = body
 
     // Get base URL based on environment
