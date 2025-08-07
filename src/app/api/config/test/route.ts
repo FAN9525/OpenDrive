@@ -3,7 +3,9 @@ import { EVALUE8_ENDPOINTS } from '@/utils/constants'
 
 export async function POST(request: NextRequest) {
   try {
+    console.log('API test endpoint called')
     const body = await request.json()
+    console.log('Request body:', body)
     const { environment = 'live' } = body
 
     // Get base URL based on environment
@@ -11,8 +13,12 @@ export async function POST(request: NextRequest) {
       ? 'https://www.evalue8.co.za/evalue8webservice/'
       : 'https://www.evalue8.co.za/evalue8webservice/sandbox/'
 
+    const endpoint = EVALUE8_ENDPOINTS?.MAKES || 'getmakes.php'
+    const testUrl = `${baseUrl}${endpoint}`
+    console.log('Testing URL:', testUrl)
+
     // Test connection by fetching makes (simplest endpoint)
-    const response = await fetch(`${baseUrl}${EVALUE8_ENDPOINTS.MAKES}`, {
+    const response = await fetch(testUrl, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -20,14 +26,21 @@ export async function POST(request: NextRequest) {
       }
     })
 
+    console.log('Response status:', response.status)
+    console.log('Response ok:', response.ok)
+
     if (!response.ok) {
+      const errorText = await response.text()
+      console.log('Error response text:', errorText)
       return NextResponse.json({
         success: false,
-        error: `HTTP ${response.status}: ${response.statusText}`
+        error: `HTTP ${response.status}: ${response.statusText}`,
+        details: errorText
       }, { status: 500 })
     }
 
     const data = await response.json()
+    console.log('API response data:', data)
 
     if (data.result === 0) {
       return NextResponse.json({
