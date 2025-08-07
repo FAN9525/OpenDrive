@@ -53,12 +53,33 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch from eValue8 API
-    const baseUrl = config.environment === 'live' 
+    // Temporarily force live environment since sandbox returns 404
+    const useEnvironment = 'live' // Force live environment for now
+    const baseUrl = useEnvironment === 'live' 
       ? 'https://www.evalue8.co.za/evalue8webservice/'
       : 'https://www.evalue8.co.za/evalue8webservice/sandbox/'
     
-    const response = await fetch(`${baseUrl}${EVALUE8_ENDPOINTS.MODELS}?mmMake=${encodeURIComponent(make)}`)
+    const apiUrl = `${baseUrl}${EVALUE8_ENDPOINTS.MODELS}?mmMake=${encodeURIComponent(make)}`
+    console.log('Fetching models from:', apiUrl)
+    console.log('Config environment:', config.environment, 'Using:', useEnvironment)
+    console.log('Make parameter:', make)
+    
+    const response = await fetch(apiUrl)
+    console.log('Models API response status:', response.status)
+    
+    if (!response.ok) {
+      console.log('Models API error:', response.status, response.statusText)
+      const errorText = await response.text()
+      console.log('Models API error response:', errorText)
+      return NextResponse.json({
+        success: false,
+        error: `API returned ${response.status}: ${response.statusText}`,
+        details: errorText
+      }, { status: 500 })
+    }
+    
     const apiData = await response.json()
+    console.log('Models API data result:', apiData.result, 'Variants count:', apiData.Variants?.length)
 
     if (apiData.result !== 0) {
       return NextResponse.json({
