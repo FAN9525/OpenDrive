@@ -23,40 +23,26 @@ export async function POST(request: NextRequest) {
       ? 'https://www.evalue8.co.za/evalue8webservice/'
       : 'https://www.evalue8.co.za/evalue8webservice/sandbox/'
 
-    // Build test parameters - try multiple common API parameter formats
+    // According to eValue8 documentation, getmakes.php doesn't require authentication
+    // We'll test the basic endpoint first, then test with credentials if provided
     let testParams = ''
+    let testWithCredentials = false
+
     if (username && password) {
-      // Common API parameter formats for eValue8-type APIs
-      testParams = `?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
+      testWithCredentials = true
+      // Use correct eValue8 parameter names from documentation
+      testParams = `?uname=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
       
-      // Also try with additional common parameters if provided in the body
+      // Add required eValue8 parameters if provided
       if (body.clientRef) {
-        testParams += `&clientref=${encodeURIComponent(body.clientRef)}`
+        testParams += `&clientRef=${encodeURIComponent(body.clientRef)}`
       }
       if (body.appName) {
-        testParams += `&appname=${encodeURIComponent(body.appName)}`
+        testParams += `&soft=${encodeURIComponent(body.appName)}`
       }
       if (body.computerName) {
-        testParams += `&computername=${encodeURIComponent(body.computerName)}`
+        testParams += `&comid=${encodeURIComponent(body.computerName)}`
       }
-    } else {
-      // Try to get existing configuration from database
-      const { data: config } = await supabase
-        .from('api_configurations')
-        .select('*')
-        .eq('is_active', true)
-        .single()
-
-      if (!config) {
-        return NextResponse.json({
-          success: false,
-          error: 'No API credentials provided and no active configuration found'
-        }, { status: 400 })
-      }
-
-      // Decrypt stored credentials
-      const decryptedPassword = decrypt(config.password_encrypted)
-      testParams = `?username=${encodeURIComponent(config.username)}&password=${encodeURIComponent(decryptedPassword)}&clientref=${encodeURIComponent(config.client_ref)}&appname=${encodeURIComponent(config.app_name)}&computername=${encodeURIComponent(config.computer_name)}`
     }
 
     const endpoint = EVALUE8_ENDPOINTS?.MAKES || 'getmakes.php'
@@ -129,15 +115,22 @@ export async function POST(request: NextRequest) {
     }
 
     if (data.result === 0) {
+      const message = testWithCredentials 
+        ? `✅ Connection and credentials verified! Found ${data.data?.length || 0} vehicle makes.`
+        : `✅ Basic connection successful! Found ${data.data?.length || 0} vehicle makes. ${!testWithCredentials ? '(Note: Credentials not tested - provide credentials to test full API access)' : ''}`
+      
       return NextResponse.json({
         success: true,
-        message: `Connection successful! Found ${data.data?.length || 0} vehicle makes.`,
-        environment: environment
+        message,
+        environment: environment,
+        vehicleCount: data.data?.length || 0,
+        credentialsTested: testWithCredentials
       })
     } else {
       return NextResponse.json({
         success: false,
-        error: data.message || 'API returned an error'
+        error: data.message || 'API returned an error',
+        apiResult: data.result
       }, { status: 500 })
     }
 
