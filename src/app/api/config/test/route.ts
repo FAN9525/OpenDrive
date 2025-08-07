@@ -37,9 +37,13 @@ export async function POST(request: NextRequest) {
     }
 
     const { environment = 'live', username, password } = body
+    
+    // Force live environment for testing since sandbox might not exist
+    const testEnvironment = 'live'
+    console.log('Original environment:', environment, 'Using environment:', testEnvironment)
 
-    // Get base URL based on environment
-    const baseUrl = environment === 'live' 
+    // Get base URL based on environment (using live for testing)
+    const baseUrl = testEnvironment === 'live' 
       ? 'https://www.evalue8.co.za/evalue8webservice/'
       : 'https://www.evalue8.co.za/evalue8webservice/sandbox/'
 
@@ -71,7 +75,7 @@ export async function POST(request: NextRequest) {
     console.log('Base URL:', baseUrl)
     console.log('Endpoint:', endpoint)
     console.log('Test params:', testParams.replace(/password=[^&]*/g, 'password=***'))
-    console.log('Environment:', environment)
+    console.log('Environment requested:', environment, 'Using:', testEnvironment)
     console.log('Credentials provided:', !!username && !!password)
 
     // Test connection by fetching makes (simplest endpoint)
@@ -153,7 +157,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: true,
         message,
-        environment: environment,
+        environment: testEnvironment,
         vehicleCount: data.data?.length || 0,
         credentialsTested: testWithCredentials
       })
