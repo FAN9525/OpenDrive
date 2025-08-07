@@ -70,3 +70,4 @@ The database tables are already created:
 ## Support
 
 If you need help, check the README.md file for detailed instructions.
+

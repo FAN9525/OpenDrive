@@ -4,6 +4,13 @@ import { EVALUE8_ENDPOINTS, CACHE_DURATION } from '@/utils/constants'
 
 export async function GET() {
   try {
+    if (!supabase) {
+      return NextResponse.json({
+        success: false,
+        error: 'Database connection not available'
+      }, { status: 500 })
+    }
+
     const cacheKey = 'vehicle_makes'
     
     // Check cache first

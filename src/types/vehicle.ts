@@ -57,3 +57,4 @@ export interface ApiConfiguration {
   environment: 'live' | 'sandbox';
   configured: boolean;
 }
+

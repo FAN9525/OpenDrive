@@ -4,6 +4,13 @@ import { EVALUE8_ENDPOINTS, CACHE_DURATION } from '@/utils/constants'
 
 export async function GET(request: NextRequest) {
   try {
+    if (!supabase) {
+      return NextResponse.json({
+        success: false,
+        error: 'Database connection not available'
+      }, { status: 500 })
+    }
+
     const { searchParams } = new URL(request.url)
     const mmCode = searchParams.get('mmCode')
     const year = searchParams.get('year')
@@ -93,3 +100,4 @@ export async function GET(request: NextRequest) {
     }, { status: 500 })
   }
 }
+

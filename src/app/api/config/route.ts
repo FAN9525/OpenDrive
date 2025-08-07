@@ -4,6 +4,13 @@ import { encryptPassword } from '@/utils/encryption'
 
 export async function GET() {
   try {
+    if (!supabase) {
+      return NextResponse.json({
+        success: false,
+        error: 'Database connection not available'
+      }, { status: 500 })
+    }
+
     const { data: config } = await supabase
       .from('api_configurations')
       .select('app_name, username, client_ref, computer_name, environment, is_active')
@@ -33,6 +40,13 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    if (!supabase) {
+      return NextResponse.json({
+        success: false,
+        error: 'Database connection not available'
+      }, { status: 500 })
+    }
+
     const body = await request.json()
     const { appName, username, password, clientRef, computerName, environment } = body
 
@@ -92,3 +106,4 @@ export async function POST(request: NextRequest) {
     }, { status: 500 })
   }
 }
+

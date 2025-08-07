@@ -10,3 +10,4 @@ export function decryptPassword(encryptedPassword: string): string {
   const bytes = CryptoJS.AES.decrypt(encryptedPassword, ENCRYPTION_KEY)
   return bytes.toString(CryptoJS.enc.Utf8)
 }
+

@@ -5,6 +5,13 @@ import { EVALUE8_ENDPOINTS } from '@/utils/constants'
 
 export async function POST(request: NextRequest) {
   try {
+    if (!supabase) {
+      return NextResponse.json({
+        success: false,
+        error: 'Database connection not available'
+      }, { status: 500 })
+    }
+
     const body = await request.json()
     const { mmCode, mmYear, condition, mileage, accessories = [] } = body
 
