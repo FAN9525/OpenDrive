@@ -32,9 +32,20 @@ export default function Home() {
   // Valuation results state
   const [valuationResults, setValuationResults] = useState<{
     success?: boolean
-    data?: any
+    data?: {
+      mmNew?: string
+      mmRetail?: string
+      mmTrade?: string
+      mmMakeShortCode?: string
+      mvModel?: string
+    }
     error?: string
-    selectedAccessoryDetails?: any[]
+    selectedAccessoryDetails?: Array<{
+      OptionCode: string
+      Description: string
+      Retail: string
+      Trade: string
+    }>
   } | null>(null)
   const [valuationLoading, setValuationLoading] = useState(false)
 
