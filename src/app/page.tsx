@@ -19,6 +19,20 @@ export default function Home() {
     configured: false
   })
 
+  // Vehicle selection state
+  const [selectedVehicle, setSelectedVehicle] = useState<{
+    make: string
+    model: string
+    mmCode: string
+    year: string
+    condition: string
+    mileage: string
+  } | null>(null)
+
+  // Valuation results state
+  const [valuationResults, setValuationResults] = useState<any>(null)
+  const [valuationLoading, setValuationLoading] = useState(false)
+
   // Load configuration from localStorage on component mount
   useEffect(() => {
     const savedConfig = localStorage.getItem('opendrive_config')
@@ -31,6 +45,50 @@ export default function Home() {
       }
     }
   }, [])
+
+  // Handle vehicle valuation
+  const handleGetValuation = async (vehicleData: {
+    make: string
+    model: string
+    mmCode: string
+    year: string
+    condition: string
+    mileage: string
+  }) => {
+    setValuationLoading(true)
+    setValuationResults(null)
+
+    try {
+      const response = await fetch('/api/valuation', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          mmCode: vehicleData.mmCode,
+          mmYear: parseInt(vehicleData.year),
+          condition: vehicleData.condition,
+          mileage: vehicleData.mileage,
+          accessories: [] // Start with no accessories
+        })
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setValuationResults(data)
+        setSelectedVehicle(vehicleData)
+      } else {
+        console.error('Valuation failed:', data.error)
+        setValuationResults({ error: data.error })
+      }
+    } catch (error) {
+      console.error('Valuation request failed:', error)
+      setValuationResults({ error: 'Network error during valuation' })
+    } finally {
+      setValuationLoading(false)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-800 via-slate-700 to-slate-500">
@@ -105,12 +163,22 @@ export default function Home() {
 
             {/* Vehicle Lookup Grid */}
             <div className="grid lg:grid-cols-2 gap-6">
-              <VehicleSelector apiConfig={apiConfig} />
-              <ValuationResults />
+              <VehicleSelector 
+                apiConfig={apiConfig} 
+                onGetValuation={handleGetValuation}
+                isLoading={valuationLoading}
+              />
+              <ValuationResults 
+                results={valuationResults}
+                isLoading={valuationLoading}
+              />
             </div>
 
             {/* Accessories Section */}
-            <AccessorySelector />
+            <AccessorySelector 
+              mmCode={selectedVehicle?.mmCode}
+              mmYear={selectedVehicle ? parseInt(selectedVehicle.year) : undefined}
+            />
           </div>
         ) : (
           <AdminConfig 

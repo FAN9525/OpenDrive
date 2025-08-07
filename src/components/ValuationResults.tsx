@@ -3,22 +3,15 @@
 import { ValuationData } from '@/types/vehicle'
 
 interface ValuationResultsProps {
-  valuation?: ValuationData | null
-  accessories?: Array<{
-    OptionCode: string
-    Description: string
-    Retail: string
-    Trade: string
-  }>
-  loading?: boolean
+  results?: any
+  isLoading?: boolean
 }
 
 export default function ValuationResults({ 
-  valuation, 
-  accessories = [], 
-  loading = false 
+  results, 
+  isLoading = false 
 }: ValuationResultsProps) {
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 shadow-xl">
         <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
@@ -34,7 +27,7 @@ export default function ValuationResults({
     )
   }
 
-  if (!valuation) {
+  if (!results) {
     return (
       <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 shadow-xl">
         <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
@@ -47,15 +40,44 @@ export default function ValuationResults({
     )
   }
 
+  // Handle error case
+  if (results.error) {
+    return (
+      <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 shadow-xl">
+        <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+          📊 Valuation Results
+        </h2>
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+          <strong>Error:</strong> {results.error}
+        </div>
+      </div>
+    )
+  }
+
+  const valuation = results.data
+  if (!valuation) {
+    return (
+      <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 shadow-xl">
+        <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+          📊 Valuation Results
+        </h2>
+        <div className="text-center py-12 text-slate-500">
+          No valuation data available.
+        </div>
+      </div>
+    )
+  }
+
   const newValue = parseInt(valuation.mmNew) || 0
   const baseRetail = parseInt(valuation.mmRetail) || 0
   const baseTrade = parseInt(valuation.mmTrade) || 0
 
+  const accessories = results.selectedAccessoryDetails || []
   const accessoriesRetailTotal = accessories.reduce(
-    (sum, acc) => sum + parseInt(acc.Retail), 0
+    (sum: number, acc: any) => sum + parseInt(acc.Retail), 0
   )
   const accessoriesTradeTotal = accessories.reduce(
-    (sum, acc) => sum + parseInt(acc.Trade), 0
+    (sum: number, acc: any) => sum + parseInt(acc.Trade), 0
   )
 
   const totalRetail = baseRetail + accessoriesRetailTotal

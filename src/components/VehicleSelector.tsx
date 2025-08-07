@@ -6,9 +6,18 @@ import { CONDITION_OPTIONS, MILEAGE_OPTIONS } from '@/utils/constants'
 
 interface VehicleSelectorProps {
   apiConfig: ApiConfiguration
+  onGetValuation?: (vehicleData: {
+    make: string
+    model: string
+    mmCode: string
+    year: string
+    condition: string
+    mileage: string
+  }) => void
+  isLoading?: boolean
 }
 
-export default function VehicleSelector({ apiConfig }: VehicleSelectorProps) {
+export default function VehicleSelector({ apiConfig, onGetValuation, isLoading: parentLoading }: VehicleSelectorProps) {
   const [makes, setMakes] = useState<VehicleMake[]>([])
   const [models, setModels] = useState<VehicleModel[]>([])
   const [years, setYears] = useState<VehicleYear[]>([])
@@ -244,20 +253,32 @@ export default function VehicleSelector({ apiConfig }: VehicleSelectorProps) {
           
           <button
             onClick={() => {
-              // This will trigger valuation in parent component
-              // For now, we'll just log the selection
-              console.log({
-                make: selectedMake,
-                model: selectedModel,
-                year: selectedYear,
-                condition,
-                mileage
-              })
+              if (onGetValuation && selectedMake && selectedModel && selectedYear) {
+                // Find the selected model to get its mmCode
+                const selectedModelData = models.find(m => m.mvCode === selectedModel)
+                if (selectedModelData) {
+                  onGetValuation({
+                    make: selectedMake,
+                    model: selectedModelData.mvModel,
+                    mmCode: selectedModel,
+                    year: selectedYear,
+                    condition,
+                    mileage
+                  })
+                }
+              }
             }}
-            disabled={loading || !selectedYear}
+            disabled={loading || parentLoading || !selectedYear}
             className="w-full bg-gradient-to-r from-slate-700 to-slate-600 text-white py-3 px-4 rounded-lg font-semibold hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
-            💰 Get Vehicle Value
+            {parentLoading ? (
+              <div className="flex items-center justify-center gap-2">
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                Getting Value...
+              </div>
+            ) : (
+              '💰 Get Vehicle Value'
+            )}
           </button>
         </div>
 
