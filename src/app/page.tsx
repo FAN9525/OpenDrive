@@ -30,7 +30,12 @@ export default function Home() {
   } | null>(null)
 
   // Valuation results state
-  const [valuationResults, setValuationResults] = useState<any>(null)
+  const [valuationResults, setValuationResults] = useState<{
+    success?: boolean
+    data?: any
+    error?: string
+    selectedAccessoryDetails?: any[]
+  } | null>(null)
   const [valuationLoading, setValuationLoading] = useState(false)
 
   // Load configuration from localStorage on component mount

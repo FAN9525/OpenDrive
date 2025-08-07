@@ -1,9 +1,23 @@
 'use client'
 
-import { ValuationData } from '@/types/vehicle'
-
 interface ValuationResultsProps {
-  results?: any
+  results?: {
+    success?: boolean
+    data?: {
+      mmNew?: string
+      mmRetail?: string
+      mmTrade?: string
+      mmMakeShortCode?: string
+      mvModel?: string
+    }
+    error?: string
+    selectedAccessoryDetails?: Array<{
+      OptionCode: string
+      Description: string
+      Retail: string
+      Trade: string
+    }>
+  } | null
   isLoading?: boolean
 }
 
@@ -74,10 +88,10 @@ export default function ValuationResults({
 
   const accessories = results.selectedAccessoryDetails || []
   const accessoriesRetailTotal = accessories.reduce(
-    (sum: number, acc: any) => sum + parseInt(acc.Retail), 0
+    (sum: number, acc: { Retail: string }) => sum + parseInt(acc.Retail), 0
   )
   const accessoriesTradeTotal = accessories.reduce(
-    (sum: number, acc: any) => sum + parseInt(acc.Trade), 0
+    (sum: number, acc: { Trade: string }) => sum + parseInt(acc.Trade), 0
   )
 
   const totalRetail = baseRetail + accessoriesRetailTotal
