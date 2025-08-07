@@ -9,6 +9,9 @@ interface ValuationResultsProps {
       mmTrade?: string
       mmMakeShortCode?: string
       mvModel?: string
+      mmYear?: string
+      mmGuide?: string
+      mmEstimator?: string
     }
     error?: string
     selectedAccessoryDetails?: Array<{
@@ -82,9 +85,9 @@ export default function ValuationResults({
     )
   }
 
-  const newValue = parseInt(valuation.mmNew) || 0
-  const baseRetail = parseInt(valuation.mmRetail) || 0
-  const baseTrade = parseInt(valuation.mmTrade) || 0
+  const newValue = parseInt(valuation.mmNew || '0') || 0
+  const baseRetail = parseInt(valuation.mmRetail || '0') || 0
+  const baseTrade = parseInt(valuation.mmTrade || '0') || 0
 
   const accessories = results.selectedAccessoryDetails || []
   const accessoriesRetailTotal = accessories.reduce(
@@ -106,10 +109,10 @@ export default function ValuationResults({
       {/* Vehicle Info Card */}
       <div className="bg-gradient-to-r from-slate-700 to-slate-600 text-white p-4 rounded-lg mb-6">
         <h3 className="text-lg font-semibold">
-          {valuation.mmMakeShortCode} {valuation.mvModel} ({valuation.mmYear})
+          {valuation.mmMakeShortCode || 'Unknown'} {valuation.mvModel || 'Unknown'} ({valuation.mmYear || 'Unknown'})
         </h3>
         <p className="text-slate-200">
-          Guide: {valuation.mmGuide} 
+          Guide: {valuation.mmGuide || 'Unknown'} 
           {valuation.mmEstimator === '1' && ' (Estimator)'}
         </p>
       </div>
