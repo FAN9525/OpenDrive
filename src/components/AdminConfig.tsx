@@ -45,7 +45,7 @@ export default function AdminConfig({ apiConfig, setApiConfig, onBack }: AdminCo
       : 'https://www.evalue8.co.za/evalue8webservice/sandbox/'
   }
 
-  const saveConfiguration = () => {
+  const saveConfiguration = async () => {
     const requiredFields = ['appName', 'username', 'password', 'clientRef', 'computerName']
     const missing = requiredFields.filter(field => !formData[field as keyof ApiConfiguration])
 
@@ -62,19 +62,46 @@ export default function AdminConfig({ apiConfig, setApiConfig, onBack }: AdminCo
       configured: true
     }
 
-    // Save to localStorage
-    localStorage.setItem('opendrive_config', JSON.stringify(configToSave))
-    
-    // Update parent state
-    setApiConfig(configToSave)
+    try {
+      // Save to database via API
+      const response = await fetch('/api/config', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      })
 
-    setMessage({
-      type: 'success',
-      text: 'Configuration saved successfully!'
-    })
+      const data = await response.json()
 
-    // Clear message after 3 seconds
-    setTimeout(() => setMessage(null), 3000)
+      if (!data.success) {
+        setMessage({
+          type: 'error',
+          text: `Failed to save to database: ${data.error}`
+        })
+        return
+      }
+
+      // Save to localStorage
+      localStorage.setItem('opendrive_config', JSON.stringify(configToSave))
+      
+      // Update parent state
+      setApiConfig(configToSave)
+
+      setMessage({
+        type: 'success',
+        text: 'Configuration saved successfully to database and local storage!'
+      })
+
+      // Clear message after 3 seconds
+      setTimeout(() => setMessage(null), 3000)
+    } catch (error) {
+      setMessage({
+        type: 'error',
+        text: 'Failed to save configuration: Network error'
+      })
+      console.error('Save configuration error:', error)
+    }
   }
 
   const testConnection = async () => {
