@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Accessory } from '@/types/vehicle'
 
 interface AccessorySelectorProps {
@@ -19,20 +19,7 @@ export default function AccessorySelector({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    if (mmCode && mmYear) {
-      loadAccessories()
-    } else {
-      setAccessories([])
-      setSelectedAccessories([])
-    }
-  }, [mmCode, mmYear])
-
-  useEffect(() => {
-    onAccessoriesChange?.(selectedAccessories)
-  }, [selectedAccessories, onAccessoriesChange])
-
-  const loadAccessories = async () => {
+  const loadAccessories = useCallback(async () => {
     if (!mmCode || !mmYear) return
 
     setLoading(true)
@@ -49,13 +36,26 @@ export default function AccessorySelector({
       } else {
         setError(data.error || 'Failed to load accessories')
       }
-    } catch (err) {
+    } catch (error) {
       setError('Error loading accessories')
-      console.error('Error loading accessories:', err)
+      console.error('Error loading accessories:', error)
     } finally {
       setLoading(false)
     }
-  }
+  }, [mmCode, mmYear])
+
+  useEffect(() => {
+    if (mmCode && mmYear) {
+      loadAccessories()
+    } else {
+      setAccessories([])
+      setSelectedAccessories([])
+    }
+  }, [mmCode, mmYear, loadAccessories])
+
+  useEffect(() => {
+    onAccessoriesChange?.(selectedAccessories)
+  }, [selectedAccessories, onAccessoriesChange])
 
   const toggleAccessory = (accessory: Accessory) => {
     setSelectedAccessories(prev => {

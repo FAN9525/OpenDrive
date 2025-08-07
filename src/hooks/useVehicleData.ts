@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { VehicleMake, VehicleModel, VehicleYear, Accessory } from '@/types/vehicle'
 
 export function useVehicleData() {
@@ -22,8 +22,9 @@ export function useVehicleData() {
       } else {
         setError(data.error || 'Failed to load vehicle makes')
       }
-    } catch (err) {
+    } catch (error) {
       setError('Error loading vehicle makes')
+      console.error('Error loading makes:', error)
     } finally {
       setLoading(false)
     }
@@ -47,8 +48,9 @@ export function useVehicleData() {
       } else {
         setError(data.error || 'Failed to load models')
       }
-    } catch (err) {
+    } catch (error) {
       setError('Error loading models')
+      console.error('Error loading models:', error)
     } finally {
       setLoading(false)
     }
@@ -72,8 +74,9 @@ export function useVehicleData() {
       } else {
         setError(data.error || 'Failed to load years')
       }
-    } catch (err) {
+    } catch (error) {
       setError('Error loading years')
+      console.error('Error loading years:', error)
     } finally {
       setLoading(false)
     }
@@ -97,8 +100,9 @@ export function useVehicleData() {
       } else {
         setError(data.error || 'Failed to load accessories')
       }
-    } catch (err) {
+    } catch (error) {
       setError('Error loading accessories')
+      console.error('Error loading accessories:', error)
     } finally {
       setLoading(false)
     }

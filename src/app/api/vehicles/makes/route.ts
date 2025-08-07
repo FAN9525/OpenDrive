@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { supabase } from '@/utils/supabase'
 import { EVALUE8_ENDPOINTS, CACHE_DURATION } from '@/utils/constants'
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { ApiConfiguration, VehicleMake, VehicleModel, VehicleYear } from '@/types/vehicle'
 import { CONDITION_OPTIONS, MILEAGE_OPTIONS } from '@/utils/constants'
 
@@ -39,9 +39,9 @@ export default function VehicleSelector({ apiConfig }: VehicleSelectorProps) {
       } else {
         setError(data.error || 'Failed to load vehicle makes')
       }
-    } catch (err) {
+    } catch (error) {
       setError('Error loading vehicle makes')
-      console.error('Error loading makes:', err)
+      console.error('Error loading makes:', error)
     } finally {
       setLoading(false)
     }
@@ -60,8 +60,9 @@ export default function VehicleSelector({ apiConfig }: VehicleSelectorProps) {
       } else {
         setError(data.error || 'Failed to load models')
       }
-    } catch (err) {
+    } catch (error) {
       setError('Error loading models')
+      console.error('Error loading models:', error)
     } finally {
       setLoading(false)
     }
@@ -80,8 +81,9 @@ export default function VehicleSelector({ apiConfig }: VehicleSelectorProps) {
       } else {
         setError(data.error || 'Failed to load years')
       }
-    } catch (err) {
+    } catch (error) {
       setError('Error loading years')
+      console.error('Error loading years:', error)
     } finally {
       setLoading(false)
     }

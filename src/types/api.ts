@@ -1,5 +1,5 @@
 // API response types for eValue8 integration
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   result: number;
   message?: string;
   data?: T;

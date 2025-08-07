@@ -22,8 +22,8 @@ export default function AdminConfig({ apiConfig, setApiConfig, onBack }: AdminCo
         const config = JSON.parse(saved)
         setFormData(config)
         setApiConfig(config)
-      } catch (err) {
-        console.error('Error loading saved config:', err)
+      } catch (error) {
+        console.error('Error loading saved config:', error)
       }
     }
   }, [setApiConfig])
@@ -111,11 +111,12 @@ export default function AdminConfig({ apiConfig, setApiConfig, onBack }: AdminCo
           text: `❌ ${data.error || 'Connection failed'}`
         })
       }
-    } catch (err) {
+    } catch (error) {
       setMessage({
         type: 'error',
         text: '❌ Connection failed: Network error'
       })
+      console.error('Connection test error:', error)
     } finally {
       setTesting(false)
     }

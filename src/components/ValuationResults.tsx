@@ -137,7 +137,7 @@ export default function ValuationResults({
               🔧 Selected Accessories ({accessories.length}):
             </h4>
             <div className="bg-slate-50 rounded-lg p-4 space-y-2">
-              {accessories.map((acc, index) => (
+              {accessories.map((acc) => (
                 <div 
                   key={acc.OptionCode} 
                   className="flex justify-between items-center py-2 border-b border-slate-200 last:border-b-0"

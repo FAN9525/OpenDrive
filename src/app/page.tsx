@@ -33,6 +33,7 @@ export default function Home() {
           
           <div className="text-center">
             <div className="flex items-center justify-center gap-4 mb-2">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img 
                 src="https://i.ibb.co/xtRWrHD8/Logo.png" 
                 alt="OpenDrive Logo" 

@@ -92,10 +92,10 @@ export async function POST(request: NextRequest) {
         if (accessoryResponse.ok) {
           const accessoryData = await accessoryResponse.json()
           if (accessoryData.result === 0 && accessoryData.Optional) {
-            selectedAccessoryDetails = accessoryData.Optional.filter((acc: any) => 
+            selectedAccessoryDetails = accessoryData.Optional.filter((acc: { OptionCode: string }) => 
               accessories.includes(acc.OptionCode)
             )
-            accessoriesValue = selectedAccessoryDetails.reduce((sum: number, acc: any) => 
+            accessoriesValue = selectedAccessoryDetails.reduce((sum: number, acc: { Retail: string }) => 
               sum + parseInt(acc.Retail), 0
             )
           }
