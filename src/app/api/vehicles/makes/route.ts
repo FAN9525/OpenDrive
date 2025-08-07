@@ -43,12 +43,28 @@ export async function GET() {
     }
 
     // Fetch from eValue8 API
-    const baseUrl = config.environment === 'live' 
+    // Temporarily force live environment since sandbox returns 404
+    const useEnvironment = 'live' // Force live environment for now
+    const baseUrl = useEnvironment === 'live' 
       ? 'https://www.evalue8.co.za/evalue8webservice/'
       : 'https://www.evalue8.co.za/evalue8webservice/sandbox/'
     
+    console.log('Fetching makes from:', `${baseUrl}${EVALUE8_ENDPOINTS.MAKES}`)
+    console.log('Config environment:', config.environment, 'Using:', useEnvironment)
+    
     const response = await fetch(`${baseUrl}${EVALUE8_ENDPOINTS.MAKES}`)
+    console.log('Makes API response status:', response.status)
+    
+    if (!response.ok) {
+      console.log('Makes API error:', response.status, response.statusText)
+      return NextResponse.json({
+        success: false,
+        error: `API returned ${response.status}: ${response.statusText}`
+      }, { status: 500 })
+    }
+    
     const apiData = await response.json()
+    console.log('Makes API data result:', apiData.result, 'Data count:', apiData.data?.length)
 
     if (apiData.result !== 0) {
       return NextResponse.json({
