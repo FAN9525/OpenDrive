@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/utils/supabase'
 import { EVALUE8_ENDPOINTS } from '@/utils/constants'
-import { decrypt } from '@/utils/encryption'
 
 export async function POST(request: NextRequest) {
   try {
@@ -154,14 +153,7 @@ export async function POST(request: NextRequest) {
       }, { status: 500 })
     }
 
-    // Check for JSON parsing errors from our decrypt function
-    if (error instanceof Error && error.message.includes('decrypt')) {
-      return NextResponse.json({
-        success: false,
-        error: 'Configuration error: Could not decrypt stored credentials. Please re-save your configuration.',
-        details: (error as Error).message
-      }, { status: 500 })
-    }
+
 
     return NextResponse.json({
       success: false,
