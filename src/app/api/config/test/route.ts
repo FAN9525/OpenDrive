@@ -4,9 +4,10 @@ import { EVALUE8_ENDPOINTS } from '@/utils/constants'
 
 export async function POST(request: NextRequest) {
   try {
-    console.log('API test endpoint called')
+    console.log('=== API test endpoint called ===')
     
     if (!supabase) {
+      console.log('ERROR: Supabase client not available')
       return NextResponse.json({
         success: false,
         error: 'Database connection not available'
@@ -14,7 +15,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    console.log('Request body:', body)
+    console.log('Request body received:', JSON.stringify(body, null, 2))
     const { environment = 'live', username, password } = body
 
     // Get base URL based on environment
@@ -46,7 +47,12 @@ export async function POST(request: NextRequest) {
 
     const endpoint = EVALUE8_ENDPOINTS?.MAKES || 'getmakes.php'
     const testUrl = `${baseUrl}${endpoint}${testParams}`
-    console.log('Testing URL:', testUrl.replace(/password=[^&]*/g, 'password=***'))
+    console.log('Final test URL:', testUrl.replace(/password=[^&]*/g, 'password=***'))
+    console.log('Base URL:', baseUrl)
+    console.log('Endpoint:', endpoint)
+    console.log('Test params:', testParams.replace(/password=[^&]*/g, 'password=***'))
+    console.log('Environment:', environment)
+    console.log('Credentials provided:', !!username && !!password)
 
     // Test connection by fetching makes (simplest endpoint)
     // First, try to connect to the API endpoint
@@ -71,19 +77,25 @@ export async function POST(request: NextRequest) {
       
       // Check for common HTTP errors
       if (response.status === 404) {
+        console.log('ERROR: 404 - API endpoint not found')
+        console.log('Full URL that failed:', testUrl.replace(/password=[^&]*/g, 'password=***'))
         return NextResponse.json({
           success: false,
           error: 'API endpoint not found. Please check the environment and endpoint URL.',
           details: `${response.status}: ${response.statusText}`,
-          url: baseUrl + endpoint
+          url: baseUrl + endpoint,
+          fullUrl: testUrl.replace(/password=[^&]*/g, 'password=***')
         }, { status: 400 })
       }
       
       if (response.status === 403 || response.status === 401) {
+        console.log(`ERROR: ${response.status} - Authentication failed`)
+        console.log('Error response:', errorText)
         return NextResponse.json({
           success: false,
           error: 'Authentication failed. Please check your credentials.',
-          details: `${response.status}: ${response.statusText}`
+          details: `${response.status}: ${response.statusText}`,
+          responseText: errorText
         }, { status: 400 })
       }
       
