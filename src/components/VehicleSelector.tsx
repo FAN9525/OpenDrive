@@ -56,6 +56,13 @@ export default function VehicleSelector({ apiConfig, onGetValuation, isLoading: 
     }
   }
 
+  // Auto-load makes whenever component mounts and API is configured
+  useEffect(() => {
+    if (apiConfig.configured && makes.length === 0) {
+      loadMakes()
+    }
+  }, [apiConfig.configured])
+
   const loadModels = async (make: string) => {
     if (!make) return
 
@@ -238,21 +245,6 @@ export default function VehicleSelector({ apiConfig, onGetValuation, isLoading: 
 
         {/* Action Buttons */}
         <div className="space-y-3 pt-4">
-          <button
-            onClick={loadMakes}
-            disabled={loading || !apiConfig.configured}
-            className="w-full bg-gradient-to-r from-slate-700 to-slate-600 text-white py-3 px-4 rounded-lg font-semibold hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-          >
-            {loading ? (
-              <div className="flex items-center justify-center gap-2">
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                Loading...
-              </div>
-            ) : (
-              '🔄 Load Vehicle Makes'
-            )}
-          </button>
-          
           <button
             onClick={() => {
               if (onGetValuation && selectedMake && selectedModel && selectedYear) {

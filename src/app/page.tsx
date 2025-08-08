@@ -133,28 +133,7 @@ export default function Home() {
             </div>
             <p className="text-slate-600 mb-4">Professional vehicle valuation system powered by eValue8</p>
             
-            <div className="flex justify-center gap-3">
-              <button
-                className={`px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
-                  currentPage === 'lookup'
-                    ? 'bg-white shadow-lg'
-                    : 'bg-white/70 hover:bg-white/90'
-                }`}
-                onClick={() => setCurrentPage('lookup')}
-              >
-                🔍 Vehicle Lookup
-              </button>
-              <button
-                className={`px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
-                  currentPage === 'admin'
-                    ? 'bg-white shadow-lg'
-                    : 'bg-white/70 hover:bg-white/90'
-                }`}
-                onClick={() => setCurrentPage('admin')}
-              >
-                ⚙️ Configuration
-              </button>
-            </div>
+            {/* Center navigation buttons removed to save space; use top-right Admin button */}
           </div>
         </div>
 
