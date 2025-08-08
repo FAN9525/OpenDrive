@@ -109,7 +109,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-800 via-slate-700 to-slate-500">
-      <div className="container mx-auto px-4 py-5 max-w-7xl">
+      <div className="container mx-auto px-4 py-5 max-w-7xl min-h-screen">
         {/* Header */}
         <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 mb-6 shadow-xl relative">
           <button
@@ -192,10 +192,12 @@ export default function Home() {
             </div>
 
             {/* Accessories Section */}
-            <AccessorySelector 
-              mmCode={selectedVehicle?.mmCode}
-              mmYear={selectedVehicle ? parseInt(selectedVehicle.year) : undefined}
-            />
+            <div className="pb-10">
+              <AccessorySelector 
+                mmCode={selectedVehicle?.mmCode}
+                mmYear={selectedVehicle ? parseInt(selectedVehicle.year) : undefined}
+              />
+            </div>
           </div>
         ) : (
           <AdminConfig 
