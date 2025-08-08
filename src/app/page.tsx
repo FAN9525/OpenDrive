@@ -95,8 +95,9 @@ export default function Home() {
         setValuationResults(data)
         setSelectedVehicle(vehicleData)
       } else {
-        console.error('Valuation failed:', data.error)
-        setValuationResults({ error: data.error })
+        const details = typeof data.details === 'string' ? `: ${data.details.slice(0, 300)}` : ''
+        console.error('Valuation failed:', data.error, data.details)
+        setValuationResults({ error: `${data.error}${details}` })
       }
     } catch (error) {
       console.error('Valuation request failed:', error)
