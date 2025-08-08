@@ -68,9 +68,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Build API request parameters
-    // Respect configured environment. API expects capitalized values: "Live" | "Sandbox"
+    // API expects capitalized values: "Live" | "Sandbox"
     const useEnvironment = config.environment === 'sandbox' ? 'Sandbox' : 'Live'
-    const baseUrl = useEnvironment === 'Live' 
+    const baseUrl = useEnvironment === 'Live'
       ? 'https://www.evalue8.co.za/evalue8webservice/'
       : 'https://www.evalue8.co.za/evalue8webservice/sandbox/'
     
@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
       comid: config.computer_name,
       uname: config.username,
       password: decryptedPassword,
-      clientref: config.client_ref,
+      clientRef: config.client_ref,
       condition: condition,
       mileage: mileage,
       credentials: useEnvironment,
