@@ -48,6 +48,7 @@ export default function Home() {
     }>
   } | null>(null)
   const [valuationLoading, setValuationLoading] = useState(false)
+  const [selectedAccessories, setSelectedAccessories] = useState<Array<{ OptionCode: string; Description: string; Retail: string; Trade: string }>>([])
 
   // Load configuration from localStorage on component mount
   useEffect(() => {
@@ -85,14 +86,15 @@ export default function Home() {
           mmYear: parseInt(vehicleData.year),
           condition: vehicleData.condition,
           mileage: vehicleData.mileage,
-          accessories: [] // Start with no accessories
+          accessories: selectedAccessories.map(a => a.OptionCode)
         })
       })
 
       const data = await response.json()
 
       if (data.success) {
-        setValuationResults(data)
+        // Inject selected accessories into the response so UI can show totals
+        setValuationResults({ ...data, selectedAccessoryDetails: selectedAccessories })
         setSelectedVehicle(vehicleData)
       } else {
         const details = typeof data.details === 'string' ? `: ${data.details.slice(0, 300)}` : ''
@@ -123,7 +125,7 @@ export default function Home() {
             <div className="flex items-center justify-center gap-3 mb-1">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img 
-                src="https://i.ibb.co/xtRWrHD8/Logo.png" 
+                src="https://i.ibb.co/j99h3B9j/Logotrans.png" 
                 alt="OpenDrive Logo" 
                 className="h-12 w-auto"
               />
@@ -160,6 +162,7 @@ export default function Home() {
               <AccessorySelector 
                 mmCode={selectedVehicle?.mmCode}
                 mmYear={selectedVehicle ? parseInt(selectedVehicle.year) : undefined}
+                onAccessoriesChange={setSelectedAccessories}
               />
             </div>
           </div>
