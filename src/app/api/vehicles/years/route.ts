@@ -56,9 +56,8 @@ export async function GET(request: NextRequest) {
     const currentDate = new Date()
     const guide = (currentDate.getMonth() + 1).toString() + currentDate.getFullYear().toString()
 
-    // Fetch from eValue8 API
-    // Temporarily force live environment since sandbox returns 404
-    const useEnvironment = 'live' // Force live environment for now
+    // Fetch from eValue8 API using configured environment
+    const useEnvironment = config.environment === 'sandbox' ? 'sandbox' : 'live'
     const baseUrl = useEnvironment === 'live' 
       ? 'https://www.evalue8.co.za/evalue8webservice/'
       : 'https://www.evalue8.co.za/evalue8webservice/sandbox/'

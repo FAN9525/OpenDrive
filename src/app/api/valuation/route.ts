@@ -68,9 +68,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Build API request parameters
-    // Temporarily force Live environment since Sandbox returns 404
-    // API expects capitalized values: "Live" | "Sandbox"
-    const useEnvironment = 'Live'
+    // Respect configured environment. API expects capitalized values: "Live" | "Sandbox"
+    const useEnvironment = config.environment === 'sandbox' ? 'Sandbox' : 'Live'
     const baseUrl = useEnvironment === 'Live' 
       ? 'https://www.evalue8.co.za/evalue8webservice/'
       : 'https://www.evalue8.co.za/evalue8webservice/sandbox/'
@@ -88,9 +87,15 @@ export async function POST(request: NextRequest) {
       clientref: config.client_ref,
       condition: condition,
       mileage: mileage,
-      credentials: useEnvironment
+      credentials: useEnvironment,
+      datasource: 'TRANSUNION'
     })
 
+    // Add latest guide and accessories if provided
+    const now = new Date()
+    const guide = (now.getMonth() + 1).toString() + now.getFullYear().toString()
+    params.append('guide', guide)
+    
     // Add accessories if provided
     if (accessories.length > 0) {
       params.append('options', accessories.join(','))
@@ -99,6 +104,14 @@ export async function POST(request: NextRequest) {
     // Make API request
     const apiUrl = `${baseUrl}${EVALUE8_ENDPOINTS.VALUATION}?${params}`
     console.log('Valuation API URL:', apiUrl.replace(/password=[^&]*/g, 'password=***'))
+    console.log('Valuation API auth fields:', {
+      soft: config.app_name,
+      uname: config.username,
+      clientref: config.client_ref,
+      credentials: useEnvironment,
+      datasource: 'TRANSUNION',
+      guide
+    })
     
     const response = await fetch(apiUrl)
     console.log('Valuation API response status:', response.status)

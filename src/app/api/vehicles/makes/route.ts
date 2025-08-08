@@ -42,9 +42,8 @@ export async function GET() {
       }, { status: 400 })
     }
 
-    // Fetch from eValue8 API
-    // Temporarily force live environment since sandbox returns 404
-    const useEnvironment = 'live' // Force live environment for now
+    // Fetch from eValue8 API using configured environment
+    const useEnvironment = config.environment === 'sandbox' ? 'sandbox' : 'live'
     const baseUrl = useEnvironment === 'live' 
       ? 'https://www.evalue8.co.za/evalue8webservice/'
       : 'https://www.evalue8.co.za/evalue8webservice/sandbox/'
