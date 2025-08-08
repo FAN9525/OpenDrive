@@ -37,6 +37,36 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
+    // Validate required configuration fields and decrypt password
+    let decryptedPassword = ''
+    try {
+      if (!config.app_name || !config.username || !config.client_ref || !config.computer_name) {
+        return NextResponse.json({
+          success: false,
+          error: 'Incomplete API configuration. Please set app name, username, client ref, and computer name.'
+        }, { status: 400 })
+      }
+      if (!config.password_encrypted) {
+        return NextResponse.json({
+          success: false,
+          error: 'API password not configured. Please re-save configuration in Admin.'
+        }, { status: 400 })
+      }
+      decryptedPassword = decryptPassword(config.password_encrypted)
+      if (!decryptedPassword) {
+        return NextResponse.json({
+          success: false,
+          error: 'Failed to decrypt API password. Ensure ENCRYPTION_KEY matches the key used when saving the config.'
+        }, { status: 400 })
+      }
+    } catch (decryptErr) {
+      console.error('Password decryption failed:', decryptErr)
+      return NextResponse.json({
+        success: false,
+        error: 'Password decryption error. Check ENCRYPTION_KEY and re-save configuration.'
+      }, { status: 400 })
+    }
+
     // Build API request parameters
     // Temporarily force Live environment since Sandbox returns 404
     // API expects capitalized values: "Live" | "Sandbox"
@@ -54,7 +84,7 @@ export async function POST(request: NextRequest) {
       soft: config.app_name,
       comid: config.computer_name,
       uname: config.username,
-      password: decryptPassword(config.password_encrypted),
+      password: decryptedPassword,
       clientref: config.client_ref,
       condition: condition,
       mileage: mileage,
@@ -72,26 +102,37 @@ export async function POST(request: NextRequest) {
     
     const response = await fetch(apiUrl)
     console.log('Valuation API response status:', response.status)
-    
+
+    // Read response body as text first to guard against non-JSON payloads
+    const rawBody = await response.text()
     if (!response.ok) {
       console.log('Valuation API error:', response.status, response.statusText)
-      const errorText = await response.text()
-      console.log('Valuation API error response:', errorText)
+      console.log('Valuation API error response:', rawBody)
       return NextResponse.json({
         success: false,
         error: `API request failed: ${response.status} ${response.statusText}`,
-        details: errorText
+        details: rawBody
       }, { status: 500 })
     }
 
-    const apiData = await response.json()
+    let apiData: any
+    try {
+      apiData = JSON.parse(rawBody)
+    } catch (parseErr) {
+      console.error('Valuation API returned non-JSON body:', rawBody)
+      return NextResponse.json({
+        success: false,
+        error: 'Unexpected response format from valuation service',
+        details: rawBody?.slice(0, 500)
+      }, { status: 500 })
+    }
     console.log('Valuation API data result:', apiData.result)
 
     if (apiData.result !== 0) {
       return NextResponse.json({
         success: false,
         error: apiData.message || 'Valuation request failed'
-      }, { status: 500 })
+      }, { status: 400 })
     }
 
     // Calculate accessories values if provided
