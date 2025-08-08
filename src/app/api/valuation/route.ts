@@ -70,9 +70,8 @@ export async function POST(request: NextRequest) {
     // Build API request parameters
     // API expects capitalized values: "Live" | "Sandbox"
     const useEnvironment = config.environment === 'sandbox' ? 'Sandbox' : 'Live'
-    const baseUrl = useEnvironment === 'Live'
-      ? 'https://www.evalue8.co.za/evalue8webservice/'
-      : 'https://www.evalue8.co.za/evalue8webservice/sandbox/'
+    // Always call Live base; switch sandbox via credentials per provider behavior
+    const baseUrl = 'https://www.evalue8.co.za/evalue8webservice/'
     
     console.log('Valuation request - Config environment:', config.environment, 'Using:', useEnvironment)
     console.log('Valuation params:', { mmCode, mmYear, condition, mileage })
@@ -180,8 +179,9 @@ export async function POST(request: NextRequest) {
     if (accessories.length > 0) {
       // Fetch accessory details for logging
       try {
-        const currentDate = new Date()
-        const guide = (currentDate.getMonth() + 1).toString() + currentDate.getFullYear().toString()
+    const currentDate = new Date()
+    const month = (currentDate.getMonth() + 1).toString() // no leading zero as per docs
+    const guide = `${month}${currentDate.getFullYear()}`
         
         const accessoryResponse = await fetch(
           `${baseUrl}${EVALUE8_ENDPOINTS.ACCESSORIES}?mmCode=${encodeURIComponent(mmCode)}&mmYear=${mmYear}&mmGuide=${guide}`
