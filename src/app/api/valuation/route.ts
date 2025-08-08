@@ -90,6 +90,13 @@ export async function POST(request: NextRequest) {
       datasource: 'TRANSUNION'
     })
 
+    // Support VIN-based lookups when mmCode is prefixed with 'VIN:'
+    if (mmCode && typeof mmCode === 'string' && mmCode.startsWith('VIN:')) {
+      params.delete('mmCode')
+      params.delete('mmYear')
+      params.set('vin', mmCode.replace('VIN:', ''))
+    }
+
     // Add latest guide and accessories if provided
     const now = new Date()
     const guide = (now.getMonth() + 1).toString() + now.getFullYear().toString()

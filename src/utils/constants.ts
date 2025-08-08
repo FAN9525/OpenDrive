@@ -21,7 +21,8 @@ export const EVALUE8_ENDPOINTS = {
   MODELS: 'getmodels.php',
   YEARS: 'getyears.php',
   ACCESSORIES: 'getextras.php',
-  VALUATION: 'getvalues.php'
+  VALUATION: 'getvalues.php',
+  NON_STANDARD_EXTRAS: 'getNon_stdextras.php'
 } as const
 
 export const CACHE_DURATION = {

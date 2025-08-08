@@ -127,7 +127,7 @@ export default function Home() {
               <img 
                 src="https://i.ibb.co/j99h3B9j/Logotrans.png" 
                 alt="OpenDrive Logo" 
-                className="h-12 w-auto"
+                className="h-24 w-auto"
               />
               <h1 className="text-2xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
                 OpenDrive

@@ -28,6 +28,8 @@ export interface Accessory {
   Trade: string;
 }
 
+export type SearchMode = 'make-model' | 'mmcode' | 'vin'
+
 export interface ValuationData {
   mmMakeShortCode: string;
   mvModel: string;
