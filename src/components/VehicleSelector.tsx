@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { ApiConfiguration, VehicleMake, VehicleModel, VehicleYear } from '@/types/vehicle'
+import { ApiConfiguration, VehicleMake, VehicleModel, VehicleYear, SearchMode } from '@/types/vehicle'
 import { CONDITION_OPTIONS, MILEAGE_OPTIONS } from '@/utils/constants'
 
 interface VehicleSelectorProps {
@@ -24,11 +24,14 @@ export default function VehicleSelector({ apiConfig, onGetValuation, isLoading: 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const [searchMode, setSearchMode] = useState<SearchMode>('make-model')
   const [selectedMake, setSelectedMake] = useState('')
   const [selectedModel, setSelectedModel] = useState('')
   const [selectedYear, setSelectedYear] = useState('')
   const [condition, setCondition] = useState('GO')
   const [mileage, setMileage] = useState('AV')
+  const [manualMmCode, setManualMmCode] = useState('')
+  const [vin, setVin] = useState('')
 
   const loadMakes = useCallback(async () => {
     if (!apiConfig.configured) {
@@ -142,6 +145,19 @@ export default function VehicleSelector({ apiConfig, onGetValuation, isLoading: 
       )}
 
       <div className="space-y-3 text-sm">
+        {/* Search Mode */}
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-2">Search By:</label>
+          <select
+            value={searchMode}
+            onChange={(e) => setSearchMode(e.target.value as SearchMode)}
+            className="w-full p-2.5 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none transition-colors text-sm"
+          >
+            <option value="make-model">Make & Model</option>
+            <option value="mmcode">M&M Code</option>
+            <option value="vin">VIN Number</option>
+          </select>
+        </div>
         {/* Vehicle Make */}
         <div>
           <label htmlFor="makeSelect" className="block text-sm font-medium text-slate-700 mb-2">
@@ -152,7 +168,7 @@ export default function VehicleSelector({ apiConfig, onGetValuation, isLoading: 
             value={selectedMake}
             onChange={(e) => handleMakeChange(e.target.value)}
             className="w-full p-2.5 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none transition-colors text-sm"
-            disabled={loading}
+            disabled={loading || searchMode !== 'make-model'}
           >
             <option value="">Select a make...</option>
             {makes.map((make) => (
@@ -173,7 +189,7 @@ export default function VehicleSelector({ apiConfig, onGetValuation, isLoading: 
             value={selectedModel}
             onChange={(e) => handleModelChange(e.target.value)}
             className="w-full p-2.5 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none transition-colors text-sm"
-            disabled={loading || !selectedMake}
+            disabled={loading || !selectedMake || searchMode !== 'make-model'}
           >
             <option value="">Select make first...</option>
             {models.map((model) => (
@@ -194,8 +210,33 @@ export default function VehicleSelector({ apiConfig, onGetValuation, isLoading: 
             value={selectedYear}
             onChange={(e) => setSelectedYear(e.target.value)}
             className="w-full p-2.5 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none transition-colors text-sm"
-            disabled={loading || !selectedModel}
+            disabled={loading || (searchMode === 'make-model' && !selectedModel)}
           >
+        {/* M&M Code and VIN inputs (enabled per mode) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-2">M&M Code:</label>
+            <input
+              type="text"
+              value={manualMmCode}
+              onChange={(e) => setManualMmCode(e.target.value)}
+              placeholder="e.g. 64072915"
+              className="w-full p-2.5 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none transition-colors text-sm"
+              disabled={searchMode !== 'mmcode'}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-2">VIN Number:</label>
+            <input
+              type="text"
+              value={vin}
+              onChange={(e) => setVin(e.target.value.toUpperCase())}
+              placeholder="17-character VIN"
+              className="w-full p-2.5 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none transition-colors text-sm"
+              disabled={searchMode !== 'vin'}
+            />
+          </div>
+        </div>
             <option value="">Select model first...</option>
             {years.map((year) => (
               <option key={year.mmYear} value={year.mmYear}>
@@ -247,22 +288,47 @@ export default function VehicleSelector({ apiConfig, onGetValuation, isLoading: 
         <div className="space-y-3 pt-3">
           <button
             onClick={() => {
-              if (onGetValuation && selectedMake && selectedModel && selectedYear) {
-                // Find the selected model to get its mmCode
-                const selectedModelData = models.find(m => m.mvCode === selectedModel)
-                if (selectedModelData) {
+              if (!onGetValuation) return
+
+              if (searchMode === 'make-model') {
+                if (selectedMake && selectedModel && selectedYear) {
+                  const selectedModelData = models.find(m => m.mvCode === selectedModel)
+                  if (selectedModelData) {
+                    onGetValuation({
+                      make: selectedMake,
+                      model: selectedModelData.mvModel,
+                      mmCode: selectedModel,
+                      year: selectedYear,
+                      condition,
+                      mileage
+                    })
+                  }
+                }
+              } else if (searchMode === 'mmcode') {
+                if (manualMmCode && selectedYear) {
                   onGetValuation({
-                    make: selectedMake,
-                    model: selectedModelData.mvModel,
-                    mmCode: selectedModel,
+                    make: '',
+                    model: '',
+                    mmCode: manualMmCode,
                     year: selectedYear,
+                    condition,
+                    mileage
+                  })
+                }
+              } else if (searchMode === 'vin') {
+                if (vin) {
+                  onGetValuation({
+                    make: '',
+                    model: '',
+                    mmCode: `VIN:${vin}`,
+                    year: selectedYear || '',
                     condition,
                     mileage
                   })
                 }
               }
             }}
-            disabled={loading || parentLoading || !selectedYear}
+            disabled={loading || parentLoading || (!selectedYear && searchMode !== 'vin')}
             className="w-full bg-gradient-to-r from-slate-700 to-slate-600 text-white py-2.5 px-3 rounded font-semibold hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
             {parentLoading ? (
