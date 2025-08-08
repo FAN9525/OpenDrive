@@ -57,15 +57,12 @@ export async function GET(request: NextRequest) {
     const currentDate = new Date()
     const guide = (currentDate.getMonth() + 1).toString() + currentDate.getFullYear().toString()
 
-    // Fetch from eValue8 API using configured environment
-    const useEnvironment = config.environment === 'sandbox' ? 'sandbox' : 'live'
-    const baseUrl = useEnvironment === 'live' 
-      ? 'https://www.evalue8.co.za/evalue8webservice/'
-      : 'https://www.evalue8.co.za/evalue8webservice/sandbox/'
+    // Use Live base for non-billed endpoint
+    const baseUrl = 'https://www.evalue8.co.za/evalue8webservice/'
     
     const apiUrl = `${baseUrl}${EVALUE8_ENDPOINTS.ACCESSORIES}?mmCode=${encodeURIComponent(mmCode)}&mmYear=${encodeURIComponent(year)}&mmGuide=${guide}`
     console.log('Fetching accessories from:', apiUrl)
-    console.log('Config environment:', config.environment, 'Using:', useEnvironment)
+    console.log('Config environment:', config.environment, 'Using live base for non-billed endpoint')
     console.log('mmCode:', mmCode, 'Year:', year, 'Guide:', guide)
     
     const response = await fetch(apiUrl)

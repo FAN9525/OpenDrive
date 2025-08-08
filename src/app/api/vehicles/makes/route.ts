@@ -42,14 +42,11 @@ export async function GET() {
       }, { status: 400 })
     }
 
-    // Fetch from eValue8 API using configured environment
-    const useEnvironment = config.environment === 'sandbox' ? 'sandbox' : 'live'
-    const baseUrl = useEnvironment === 'live' 
-      ? 'https://www.evalue8.co.za/evalue8webservice/'
-      : 'https://www.evalue8.co.za/evalue8webservice/sandbox/'
+    // Fetch from eValue8 API - use Live base for non-billed lookups
+    const baseUrl = 'https://www.evalue8.co.za/evalue8webservice/'
     
     console.log('Fetching makes from:', `${baseUrl}${EVALUE8_ENDPOINTS.MAKES}`)
-    console.log('Config environment:', config.environment, 'Using:', useEnvironment)
+    console.log('Config environment:', config.environment, 'Using live base for non-billed endpoint')
     
     const response = await fetch(`${baseUrl}${EVALUE8_ENDPOINTS.MAKES}`)
     console.log('Makes API response status:', response.status)

@@ -52,15 +52,12 @@ export async function GET(request: NextRequest) {
       }, { status: 400 })
     }
 
-    // Respect configured environment
-    const useEnvironment = config.environment === 'sandbox' ? 'sandbox' : 'live'
-    const baseUrl = useEnvironment === 'live'
-      ? 'https://www.evalue8.co.za/evalue8webservice/'
-      : 'https://www.evalue8.co.za/evalue8webservice/sandbox/'
+    // Use Live base for non-billed endpoint
+    const baseUrl = 'https://www.evalue8.co.za/evalue8webservice/'
 
     const apiUrl = `${baseUrl}${EVALUE8_ENDPOINTS.MODELS}?mmMake=${encodeURIComponent(make)}&datasource=TRANSUNION`
     console.log('Fetching models from:', apiUrl)
-    console.log('Config environment:', config.environment, 'Using:', useEnvironment)
+    console.log('Config environment:', config.environment, 'Using live base for non-billed endpoint')
     console.log('Make parameter:', make)
 
     const response = await fetch(apiUrl)
