@@ -115,11 +115,27 @@ export async function POST(request: NextRequest) {
       }, { status: 500 })
     }
 
-    let apiData: any
+    type ParsedValuation = {
+      result: number
+      message?: string
+      data?: {
+        mmMakeShortCode?: string
+        mvModel?: string
+        mmYear?: string | number
+        mmCode?: string
+        mmNew?: string
+        mmRetail?: string
+        mmTrade?: string
+        mmGuide?: string
+        mmEstimator?: string
+      }
+    }
+
+    let apiData: ParsedValuation
     try {
-      apiData = JSON.parse(rawBody)
+      apiData = JSON.parse(rawBody) as ParsedValuation
     } catch (parseErr) {
-      console.error('Valuation API returned non-JSON body:', rawBody)
+      console.error('Valuation API returned non-JSON body:', parseErr, rawBody)
       return NextResponse.json({
         success: false,
         error: 'Unexpected response format from valuation service',
