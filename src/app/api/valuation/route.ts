@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
     // Temporarily force Live environment since Sandbox returns 404
     // API expects capitalized values: "Live" | "Sandbox"
     const useEnvironment = 'Live'
-    const baseUrl = useEnvironment === 'live' 
+    const baseUrl = useEnvironment === 'Live' 
       ? 'https://www.evalue8.co.za/evalue8webservice/'
       : 'https://www.evalue8.co.za/evalue8webservice/sandbox/'
     
