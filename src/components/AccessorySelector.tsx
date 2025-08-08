@@ -18,6 +18,9 @@ export default function AccessorySelector({
   const [selectedAccessories, setSelectedAccessories] = useState<Accessory[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [nsDescription, setNsDescription] = useState('')
+  const [nsCostPrice, setNsCostPrice] = useState('')
+  const [nsVehicleType, setNsVehicleType] = useState<'P' | 'C'>('P')
 
   const loadAccessories = useCallback(async () => {
     if (!mmCode || !mmYear) return
@@ -181,17 +184,67 @@ export default function AccessorySelector({
         ))}
       </div>
 
-      {selectedAccessories.length > 0 && (
-        <button
-          onClick={() => {
-            // This would trigger a valuation update in the parent component
-            console.log('Update valuation with accessories:', selectedAccessories)
-          }}
-          className="w-full bg-gradient-to-r from-slate-700 to-slate-600 text-white py-2.5 px-3 rounded font-semibold hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5"
-        >
-          🔄 Update Valuation with Selected Accessories
-        </button>
-      )}
+      {/* Non-Standard Extras */}
+      <div className="bg-slate-50 border border-slate-200 rounded p-3 mb-3">
+        <h4 className="font-semibold text-slate-800 mb-2">Non-Standard Extras</h4>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+          <input
+            type="text"
+            placeholder="Description"
+            value={nsDescription}
+            onChange={(e) => setNsDescription(e.target.value)}
+            className="p-2 border-2 border-gray-200 rounded"
+          />
+          <input
+            type="number"
+            min="0"
+            placeholder="Non-Standard Extra New Price"
+            value={nsCostPrice}
+            onChange={(e) => setNsCostPrice(e.target.value)}
+            className="p-2 border-2 border-gray-200 rounded"
+          />
+          <div className="flex items-center gap-2">
+            <select
+              value={nsVehicleType}
+              onChange={(e) => setNsVehicleType(e.target.value === 'C' ? 'C' : 'P')}
+              className="p-2 border-2 border-gray-200 rounded"
+            >
+              <option value="P">Private (P)</option>
+              <option value="C">Commercial (C)</option>
+            </select>
+            <button
+              type="button"
+              onClick={async () => {
+                if (!nsCostPrice || !mmYear) return
+                try {
+                  const resp = await fetch(`/api/vehicles/nonstandard?mmYear=${mmYear}&costPrice=${encodeURIComponent(nsCostPrice)}&vehicleType=${nsVehicleType}`)
+                  const data = await resp.json()
+                  if (data.success) {
+                    const extra = {
+                      OptionCode: `NS-${Date.now()}`,
+                      Description: nsDescription || 'Non-Standard Extra',
+                      Retail: String(data.data.RetailValue || 0),
+                      Trade: String(data.data.TradeValue || 0),
+                    }
+                    setSelectedAccessories(prev => [...prev, extra])
+                    setNsDescription('')
+                    setNsCostPrice('')
+                  } else {
+                    setError(data.error || 'Failed to add non-standard extra')
+                  }
+                } catch (e) {
+                  setError('Failed to add non-standard extra')
+                }
+              }}
+              className="bg-slate-700 text-white px-3 py-2 rounded"
+            >
+              ADD
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Hint: totals are recalculated automatically in ValuationResults */}
     </div>
   )
 }

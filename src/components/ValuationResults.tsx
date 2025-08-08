@@ -112,7 +112,7 @@ export default function ValuationResults({
           {valuation.mmMakeShortCode || 'Unknown'} {valuation.mvModel || 'Unknown'} ({valuation.mmYear || 'Unknown'})
         </h3>
         <p className="text-slate-200 text-sm">
-          Guide: {valuation.mmGuide || 'Unknown'} 
+          M&M Code: {valuation.mmCode || 'Unknown'} • Guide: {valuation.mmGuide || 'Unknown'} 
           {valuation.mmEstimator === '1' && ' (Estimator)'}
         </p>
       </div>
