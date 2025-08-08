@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { ApiConfiguration, VehicleMake, VehicleModel, VehicleYear } from '@/types/vehicle'
 import { CONDITION_OPTIONS, MILEAGE_OPTIONS } from '@/utils/constants'
 
@@ -30,7 +30,7 @@ export default function VehicleSelector({ apiConfig, onGetValuation, isLoading: 
   const [condition, setCondition] = useState('GO')
   const [mileage, setMileage] = useState('AV')
 
-  const loadMakes = async () => {
+  const loadMakes = useCallback(async () => {
     if (!apiConfig.configured) {
       setError('Please configure API settings in the Admin section first')
       return
@@ -54,14 +54,14 @@ export default function VehicleSelector({ apiConfig, onGetValuation, isLoading: 
     } finally {
       setLoading(false)
     }
-  }
+  }, [apiConfig.configured])
 
   // Auto-load makes whenever component mounts and API is configured
   useEffect(() => {
     if (apiConfig.configured && makes.length === 0) {
-      loadMakes()
+      void loadMakes()
     }
-  }, [apiConfig.configured])
+  }, [apiConfig.configured, makes.length, loadMakes])
 
   const loadModels = async (make: string) => {
     if (!make) return
