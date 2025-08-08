@@ -71,7 +71,18 @@ export default function ValuationResults({
     )
   }
 
-  const valuation = results.data as any
+  type V = {
+    mmNew?: string
+    mmRetail?: string
+    mmTrade?: string
+    mmMakeShortCode?: string
+    mvModel?: string
+    mmYear?: string
+    mmGuide?: string
+    mmEstimator?: string
+    mmCode?: string
+  }
+  const valuation = results.data as V
   if (!valuation) {
     return (
       <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 shadow-xl">
