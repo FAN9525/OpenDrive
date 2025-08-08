@@ -152,10 +152,12 @@ export async function POST(request: NextRequest) {
     }
 
     if (!apiData.data) {
+      console.log('Valuation API returned empty data payload. Raw body:', rawBody)
       return NextResponse.json({
         success: false,
-        error: 'Valuation service returned no data'
-      }, { status: 502 })
+        error: 'Valuation service returned no data',
+        details: rawBody?.slice(0, 500)
+      }, { status: 404 })
     }
 
     // Calculate accessories values if provided
