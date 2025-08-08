@@ -151,6 +151,13 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
+    if (!apiData.data) {
+      return NextResponse.json({
+        success: false,
+        error: 'Valuation service returned no data'
+      }, { status: 502 })
+    }
+
     // Calculate accessories values if provided
     let accessoriesValue = 0
     let selectedAccessoryDetails = []
@@ -182,8 +189,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Log the valuation to database
-    const baseRetail = parseInt(apiData.data.mmRetail) || 0
-    const baseTrade = parseInt(apiData.data.mmTrade) || 0
+    const baseRetail = parseInt(apiData.data.mmRetail ?? '0') || 0
+    const baseTrade = parseInt(apiData.data.mmTrade ?? '0') || 0
     const totalRetail = baseRetail + accessoriesValue
     const totalTrade = baseTrade + accessoriesValue // Simplified - in reality, trade value for accessories might be different
 
