@@ -132,6 +132,35 @@ export default function VehicleSelector({ apiConfig, onGetValuation, isLoading: 
     }
   }
 
+  const autofillFromIdentify = async () => {
+    try {
+      let url = ''
+      if (searchMode === 'mmcode' && manualMmCode && selectedYear) {
+        url = `/api/vehicles/identify?mmCode=${encodeURIComponent(manualMmCode)}&mmYear=${encodeURIComponent(selectedYear)}`
+      } else if (searchMode === 'vin' && vin) {
+        url = `/api/vehicles/identify?vin=${encodeURIComponent(vin)}`
+      } else {
+        return
+      }
+      const resp = await fetch(url)
+      const data = await resp.json()
+      if (data.success && data.data) {
+        // We have mmCode, mmYear, make, model
+        setSelectedYear(data.data.mmYear?.toString() || selectedYear)
+        // Try to pre-load models by make, then select the matching model
+        if (data.data.mmMakeShortCode) {
+          await loadModels(data.data.mmMakeShortCode)
+          setSelectedMake(data.data.mmMakeShortCode)
+        }
+        if (data.data.mmCode) {
+          setSelectedModel(data.data.mmCode)
+        }
+      }
+    } catch (e) {
+      console.error('Autofill identify error:', e)
+    }
+  }
+
   return (
     <div className="bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-xl">
       <h2 className="text-lg font-semibold text-slate-800 mb-3 flex items-center gap-2">
@@ -224,6 +253,15 @@ export default function VehicleSelector({ apiConfig, onGetValuation, isLoading: 
               className="w-full p-2.5 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none transition-colors text-sm"
               disabled={searchMode !== 'mmcode'}
             />
+            {searchMode === 'mmcode' && (
+              <button
+                type="button"
+                onClick={autofillFromIdentify}
+                className="mt-2 text-sm text-slate-700 underline"
+              >
+                Autofill details from M&M Code
+              </button>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">VIN Number:</label>
@@ -235,6 +273,15 @@ export default function VehicleSelector({ apiConfig, onGetValuation, isLoading: 
               className="w-full p-2.5 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none transition-colors text-sm"
               disabled={searchMode !== 'vin'}
             />
+            {searchMode === 'vin' && (
+              <button
+                type="button"
+                onClick={autofillFromIdentify}
+                className="mt-2 text-sm text-slate-700 underline"
+              >
+                Autofill details from VIN
+              </button>
+            )}
           </div>
         </div>
             <option value="">Select model first...</option>
