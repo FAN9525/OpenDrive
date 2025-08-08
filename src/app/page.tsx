@@ -109,7 +109,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-800 via-slate-700 to-slate-500">
-      <div className="container mx-auto px-4 py-5 max-w-7xl min-h-screen">
+      <div className="container mx-auto px-4 py-5 max-w-7xl min-h-screen flex flex-col">
         {/* Header */}
         <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 mb-6 shadow-xl relative">
           <button
@@ -139,7 +139,7 @@ export default function Home() {
 
         {/* Main Content */}
         {currentPage === 'lookup' ? (
-          <div>
+          <div className="flex-1">
             {/* Configuration Status */}
             <div className={`p-4 rounded-lg mb-6 text-center ${
               apiConfig.configured

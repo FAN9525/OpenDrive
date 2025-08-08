@@ -205,42 +205,42 @@ export default function VehicleSelector({ apiConfig, onGetValuation, isLoading: 
           </select>
         </div>
 
-        {/* Vehicle Condition */}
-        <div>
-          <label htmlFor="conditionSelect" className="block text-sm font-medium text-slate-700 mb-2">
-            Vehicle Condition:
-          </label>
-          <select
-            id="conditionSelect"
-            value={condition}
-            onChange={(e) => setCondition(e.target.value)}
-            className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none transition-colors"
-          >
-            {CONDITION_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Mileage Category */}
-        <div>
-          <label htmlFor="mileageSelect" className="block text-sm font-medium text-slate-700 mb-2">
-            Mileage Category:
-          </label>
-          <select
-            id="mileageSelect"
-            value={mileage}
-            onChange={(e) => setMileage(e.target.value)}
-            className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none transition-colors"
-          >
-            {MILEAGE_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+        {/* Vehicle Condition + Mileage Category inline */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="conditionSelect" className="block text-sm font-medium text-slate-700 mb-2">
+              Vehicle Condition:
+            </label>
+            <select
+              id="conditionSelect"
+              value={condition}
+              onChange={(e) => setCondition(e.target.value)}
+              className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none transition-colors"
+            >
+              {CONDITION_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="mileageSelect" className="block text-sm font-medium text-slate-700 mb-2">
+              Mileage Category:
+            </label>
+            <select
+              id="mileageSelect"
+              value={mileage}
+              onChange={(e) => setMileage(e.target.value)}
+              className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none transition-colors"
+            >
+              {MILEAGE_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {/* Action Buttons */}
