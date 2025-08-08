@@ -111,7 +111,7 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-br from-slate-800 via-slate-700 to-slate-500">
       <div className="container mx-auto px-4 py-5 max-w-7xl min-h-screen flex flex-col">
         {/* Header */}
-        <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 mb-6 shadow-xl relative">
+        <div className="bg-white/95 backdrop-blur-sm rounded-xl p-4 mb-4 shadow-xl relative">
           <button
             className="absolute top-4 right-4 bg-gradient-to-r from-slate-700 to-slate-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5"
             onClick={() => setCurrentPage('admin')}
@@ -120,18 +120,18 @@ export default function Home() {
           </button>
           
           <div className="text-center">
-            <div className="flex items-center justify-center gap-4 mb-2">
+            <div className="flex items-center justify-center gap-3 mb-1">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img 
                 src="https://i.ibb.co/xtRWrHD8/Logo.png" 
                 alt="OpenDrive Logo" 
                 className="h-12 w-auto"
               />
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
                 OpenDrive
               </h1>
             </div>
-            <p className="text-slate-600 mb-4">Professional vehicle valuation system powered by eValue8</p>
+            <p className="text-slate-600 mb-2 text-sm">Professional vehicle valuation system powered by eValue8</p>
             
             {/* Center navigation buttons removed to save space; use top-right Admin button */}
           </div>
@@ -140,22 +140,7 @@ export default function Home() {
         {/* Main Content */}
         {currentPage === 'lookup' ? (
           <div className="flex-1">
-            {/* Configuration Status */}
-            <div className={`p-4 rounded-lg mb-6 text-center ${
-              apiConfig.configured
-                ? 'bg-green-100 border border-green-400 text-green-800'
-                : 'bg-red-100 border border-red-400 text-red-800'
-            }`}>
-              <span className={`inline-block w-3 h-3 rounded-full mr-2 ${
-                apiConfig.configured ? 'bg-green-500' : 'bg-red-500'
-              }`}></span>
-              <strong>
-                {apiConfig.configured 
-                  ? `✅ API Configured - Connected to ${apiConfig.environment} environment`
-                  : '⚠️ API Not Configured - Please configure authentication in the Admin section'
-                }
-              </strong>
-            </div>
+            {/* Configuration status removed from main UI; available in Admin panel */}
 
             {/* Vehicle Lookup Grid */}
             <div className="grid lg:grid-cols-2 gap-6">

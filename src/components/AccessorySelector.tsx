@@ -85,8 +85,8 @@ export default function AccessorySelector({
 
   if (loading) {
     return (
-      <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 shadow-xl mt-6">
-        <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+      <div className="bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-xl mt-4">
+        <h2 className="text-lg font-semibold text-slate-800 mb-3 flex items-center gap-2">
           🛠️ Optional Accessories
         </h2>
         <div className="text-center py-8">
@@ -102,11 +102,11 @@ export default function AccessorySelector({
   }
 
   return (
-    <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 shadow-xl mt-6">
-      <h2 className="text-xl font-bold text-slate-800 mb-2 flex items-center gap-2">
+    <div className="bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-xl mt-4">
+      <h2 className="text-lg font-semibold text-slate-800 mb-2 flex items-center gap-2">
         🛠️ Optional Accessories
       </h2>
-      <p className="text-slate-600 mb-6">
+      <p className="text-slate-600 mb-4 text-sm">
         Select the accessories included with this vehicle to get an accurate valuation:
       </p>
 
@@ -145,11 +145,11 @@ export default function AccessorySelector({
       )}
 
       {/* Accessories Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6 max-h-[28rem] overflow-auto pr-1">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-4 max-h-[24rem] overflow-auto pr-1">
         {accessories.map(accessory => (
           <div
             key={accessory.OptionCode}
-            className={`border-2 rounded-lg p-4 cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:shadow-lg ${
+            className={`border-2 rounded p-3 cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:shadow-lg ${
               isSelected(accessory)
                 ? 'border-slate-500 bg-slate-50 shadow-md'
                 : 'border-slate-200 bg-white hover:border-slate-400'
@@ -187,7 +187,7 @@ export default function AccessorySelector({
             // This would trigger a valuation update in the parent component
             console.log('Update valuation with accessories:', selectedAccessories)
           }}
-          className="w-full bg-gradient-to-r from-slate-700 to-slate-600 text-white py-3 px-4 rounded-lg font-semibold hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5"
+          className="w-full bg-gradient-to-r from-slate-700 to-slate-600 text-white py-2.5 px-3 rounded font-semibold hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5"
         >
           🔄 Update Valuation with Selected Accessories
         </button>

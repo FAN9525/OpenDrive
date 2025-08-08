@@ -30,8 +30,8 @@ export default function ValuationResults({
 }: ValuationResultsProps) {
   if (isLoading) {
     return (
-      <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 shadow-xl">
-        <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+      <div className="bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-xl">
+        <h2 className="text-lg font-semibold text-slate-800 mb-3 flex items-center gap-2">
           📊 Valuation Results
         </h2>
         <div className="flex items-center justify-center py-12">
@@ -46,8 +46,8 @@ export default function ValuationResults({
 
   if (!results) {
     return (
-      <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 shadow-xl">
-        <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+      <div className="bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-xl">
+        <h2 className="text-lg font-semibold text-slate-800 mb-3 flex items-center gap-2">
           📊 Valuation Results
         </h2>
         <div className="text-center py-12 text-slate-500">
@@ -60,8 +60,8 @@ export default function ValuationResults({
   // Handle error case
   if (results.error) {
     return (
-      <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 shadow-xl">
-        <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+      <div className="bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-xl">
+        <h2 className="text-lg font-semibold text-slate-800 mb-3 flex items-center gap-2">
           📊 Valuation Results
         </h2>
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
@@ -101,39 +101,39 @@ export default function ValuationResults({
   const totalTrade = baseTrade + accessoriesTradeTotal
 
   return (
-    <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 shadow-xl">
-      <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+    <div className="bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-xl">
+      <h2 className="text-lg font-semibold text-slate-800 mb-3 flex items-center gap-2">
         📊 Valuation Results
       </h2>
 
       {/* Vehicle Info Card */}
-      <div className="bg-gradient-to-r from-slate-700 to-slate-600 text-white p-4 rounded-lg mb-6">
-        <h3 className="text-lg font-semibold">
+      <div className="bg-gradient-to-r from-slate-700 to-slate-600 text-white p-3 rounded mb-4">
+        <h3 className="text-base font-semibold">
           {valuation.mmMakeShortCode || 'Unknown'} {valuation.mvModel || 'Unknown'} ({valuation.mmYear || 'Unknown'})
         </h3>
-        <p className="text-slate-200">
+        <p className="text-slate-200 text-sm">
           Guide: {valuation.mmGuide || 'Unknown'} 
           {valuation.mmEstimator === '1' && ' (Estimator)'}
         </p>
       </div>
 
       {/* Base Values Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="bg-slate-50 border border-slate-200 p-4 rounded-lg text-center">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+        <div className="bg-slate-50 border border-slate-200 p-3 rounded text-center">
           <h4 className="text-slate-600 font-medium mb-1">New Value</h4>
-          <div className="text-lg font-bold text-slate-800">
+          <div className="text-base font-bold text-slate-800">
             R{newValue.toLocaleString()}
           </div>
         </div>
-        <div className="bg-slate-50 border border-slate-200 p-4 rounded-lg text-center">
+        <div className="bg-slate-50 border border-slate-200 p-3 rounded text-center">
           <h4 className="text-slate-600 font-medium mb-1">Base Retail</h4>
-          <div className="text-lg font-bold text-slate-800">
+          <div className="text-base font-bold text-slate-800">
             R{baseRetail.toLocaleString()}
           </div>
         </div>
-        <div className="bg-slate-50 border border-slate-200 p-4 rounded-lg text-center">
+        <div className="bg-slate-50 border border-slate-200 p-3 rounded text-center">
           <h4 className="text-slate-600 font-medium mb-1">Base Trade</h4>
-          <div className="text-lg font-bold text-slate-800">
+          <div className="text-base font-bold text-slate-800">
             R{baseTrade.toLocaleString()}
           </div>
         </div>
@@ -142,28 +142,28 @@ export default function ValuationResults({
       {/* Accessories Section */}
       {accessories.length > 0 && (
         <div className="mb-6">
-          <div className="bg-slate-50 border border-slate-200 p-4 rounded-lg text-center mb-4">
+          <div className="bg-slate-50 border border-slate-200 p-3 rounded text-center mb-3">
             <h4 className="text-slate-600 font-medium mb-1">Accessories Value</h4>
-            <div className="text-lg font-bold text-slate-800">
+            <div className="text-base font-bold text-slate-800">
               R{accessoriesRetailTotal.toLocaleString()}
             </div>
           </div>
 
           {/* Total Valuation */}
-          <div className="bg-gradient-to-r from-slate-700 to-slate-600 text-white p-5 rounded-lg">
-            <h3 className="text-lg font-semibold mb-4 text-center">
+          <div className="bg-gradient-to-r from-slate-700 to-slate-600 text-white p-4 rounded">
+            <h3 className="text-base font-semibold mb-3 text-center">
               🏆 Total Valuation (Including Accessories)
             </h3>
             <div className="grid grid-cols-2 gap-4">
               <div className="text-center">
                 <div className="text-slate-200 mb-1">Total Retail Value</div>
-                <div className="text-2xl font-bold">
+                <div className="text-xl font-bold">
                   R{totalRetail.toLocaleString()}
                 </div>
               </div>
               <div className="text-center">
                 <div className="text-slate-200 mb-1">Total Trade Value</div>
-                <div className="text-2xl font-bold">
+                <div className="text-xl font-bold">
                   R{totalTrade.toLocaleString()}
                 </div>
               </div>
@@ -175,7 +175,7 @@ export default function ValuationResults({
             <h4 className="font-medium text-slate-800 mb-3">
               🔧 Selected Accessories ({accessories.length}):
             </h4>
-            <div className="bg-slate-50 rounded-lg p-4 space-y-2">
+            <div className="bg-slate-50 rounded p-3 space-y-2">
               {accessories.map((acc) => (
                 <div 
                   key={acc.OptionCode} 

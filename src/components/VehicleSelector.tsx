@@ -130,8 +130,8 @@ export default function VehicleSelector({ apiConfig, onGetValuation, isLoading: 
   }
 
   return (
-    <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 shadow-xl">
-      <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+    <div className="bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-xl">
+      <h2 className="text-lg font-semibold text-slate-800 mb-3 flex items-center gap-2">
         🚗 Vehicle Selection
       </h2>
 
@@ -141,7 +141,7 @@ export default function VehicleSelector({ apiConfig, onGetValuation, isLoading: 
         </div>
       )}
 
-      <div className="space-y-4">
+      <div className="space-y-3 text-sm">
         {/* Vehicle Make */}
         <div>
           <label htmlFor="makeSelect" className="block text-sm font-medium text-slate-700 mb-2">
@@ -151,7 +151,7 @@ export default function VehicleSelector({ apiConfig, onGetValuation, isLoading: 
             id="makeSelect"
             value={selectedMake}
             onChange={(e) => handleMakeChange(e.target.value)}
-            className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none transition-colors"
+            className="w-full p-2.5 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none transition-colors text-sm"
             disabled={loading}
           >
             <option value="">Select a make...</option>
@@ -172,7 +172,7 @@ export default function VehicleSelector({ apiConfig, onGetValuation, isLoading: 
             id="modelSelect"
             value={selectedModel}
             onChange={(e) => handleModelChange(e.target.value)}
-            className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none transition-colors"
+            className="w-full p-2.5 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none transition-colors text-sm"
             disabled={loading || !selectedMake}
           >
             <option value="">Select make first...</option>
@@ -193,7 +193,7 @@ export default function VehicleSelector({ apiConfig, onGetValuation, isLoading: 
             id="yearSelect"
             value={selectedYear}
             onChange={(e) => setSelectedYear(e.target.value)}
-            className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none transition-colors"
+            className="w-full p-2.5 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none transition-colors text-sm"
             disabled={loading || !selectedModel}
           >
             <option value="">Select model first...</option>
@@ -215,7 +215,7 @@ export default function VehicleSelector({ apiConfig, onGetValuation, isLoading: 
               id="conditionSelect"
               value={condition}
               onChange={(e) => setCondition(e.target.value)}
-              className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none transition-colors"
+              className="w-full p-2.5 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none transition-colors text-sm"
             >
               {CONDITION_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -232,7 +232,7 @@ export default function VehicleSelector({ apiConfig, onGetValuation, isLoading: 
               id="mileageSelect"
               value={mileage}
               onChange={(e) => setMileage(e.target.value)}
-              className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none transition-colors"
+              className="w-full p-2.5 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none transition-colors text-sm"
             >
               {MILEAGE_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -244,7 +244,7 @@ export default function VehicleSelector({ apiConfig, onGetValuation, isLoading: 
         </div>
 
         {/* Action Buttons */}
-        <div className="space-y-3 pt-4">
+        <div className="space-y-3 pt-3">
           <button
             onClick={() => {
               if (onGetValuation && selectedMake && selectedModel && selectedYear) {
@@ -263,7 +263,7 @@ export default function VehicleSelector({ apiConfig, onGetValuation, isLoading: 
               }
             }}
             disabled={loading || parentLoading || !selectedYear}
-            className="w-full bg-gradient-to-r from-slate-700 to-slate-600 text-white py-3 px-4 rounded-lg font-semibold hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            className="w-full bg-gradient-to-r from-slate-700 to-slate-600 text-white py-2.5 px-3 rounded font-semibold hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
             {parentLoading ? (
               <div className="flex items-center justify-center gap-2">
