@@ -71,7 +71,7 @@ export default function ValuationResults({
     )
   }
 
-  const valuation = results.data
+  const valuation = results.data as any
   if (!valuation) {
     return (
       <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 shadow-xl">
