@@ -63,11 +63,12 @@ export default function VehicleSelector({ apiConfig, onGetValuation, isLoading: 
     try {
       const response = await fetch(`/api/vehicles/models?make=${encodeURIComponent(make)}`)
       const data = await response.json()
-      
+
       if (data.success) {
         setModels(data.data)
       } else {
-        setError(data.error || 'Failed to load models')
+        const details = typeof data.details === 'string' ? `: ${data.details.slice(0, 200)}` : ''
+        setError((data.error || 'Failed to load models') + details)
       }
     } catch (error) {
       setError('Error loading models')
@@ -84,11 +85,12 @@ export default function VehicleSelector({ apiConfig, onGetValuation, isLoading: 
     try {
       const response = await fetch(`/api/vehicles/years?mmCode=${encodeURIComponent(modelCode)}`)
       const data = await response.json()
-      
+
       if (data.success) {
         setYears(data.data)
       } else {
-        setError(data.error || 'Failed to load years')
+        const details = typeof data.details === 'string' ? `: ${data.details.slice(0, 200)}` : ''
+        setError((data.error || 'Failed to load years') + details)
       }
     } catch (error) {
       setError('Error loading years')

@@ -62,15 +62,24 @@ export async function GET(request: NextRequest) {
       ? 'https://www.evalue8.co.za/evalue8webservice/'
       : 'https://www.evalue8.co.za/evalue8webservice/sandbox/'
     
-    const apiUrl = `${baseUrl}${EVALUE8_ENDPOINTS.YEARS}?mmCode=${encodeURIComponent(mmCode)}&nGuide=${guide}&datasource=TRANSUNION`
-    console.log('Fetching years from:', apiUrl)
+    const urlWithNGuide = `${baseUrl}${EVALUE8_ENDPOINTS.YEARS}?mmCode=${encodeURIComponent(mmCode)}&nGuide=${guide}&datasource=TRANSUNION`
+    const urlWithMmGuide = `${baseUrl}${EVALUE8_ENDPOINTS.YEARS}?mmCode=${encodeURIComponent(mmCode)}&mmGuide=${guide}&datasource=TRANSUNION`
+    console.log('Fetching years (primary):', urlWithNGuide)
     console.log('Config environment:', config.environment, 'Using:', useEnvironment)
     console.log('mmCode parameter:', mmCode, 'Guide:', guide)
     
-    const response = await fetch(apiUrl)
-    console.log('Years API response status:', response.status)
+    let response = await fetch(urlWithNGuide)
+    console.log('Years API response status (nGuide):', response.status)
+    let raw = await response.text()
 
-    const raw = await response.text()
+    // If 404/invalid body, retry with mmGuide
+    if (!response.ok) {
+      console.log('Years API (nGuide) error, retrying with mmGuide:', response.status, response.statusText)
+      response = await fetch(urlWithMmGuide)
+      console.log('Years API response status (mmGuide):', response.status)
+      raw = await response.text()
+    }
+
     if (!response.ok) {
       console.log('Years API error:', response.status, response.statusText, raw)
       return NextResponse.json({
