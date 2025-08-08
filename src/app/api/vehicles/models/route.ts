@@ -66,17 +66,27 @@ export async function GET(request: NextRequest) {
     const response = await fetch(apiUrl)
     console.log('Models API response status:', response.status)
 
+    const raw = await response.text()
     if (!response.ok) {
-      const errorText = await response.text()
-      console.log('Models API error:', response.status, response.statusText, errorText)
+      console.log('Models API error:', response.status, response.statusText, raw)
       return NextResponse.json({
         success: false,
         error: `API returned ${response.status}: ${response.statusText}`,
-        details: errorText
+        details: raw
       }, { status: 500 })
     }
 
-    const apiData = await response.json() as { result: number; Variants?: unknown[]; message?: string }
+    let apiData: { result: number; Variants?: unknown[]; message?: string }
+    try {
+      apiData = JSON.parse(raw)
+    } catch (e) {
+      console.error('Models API returned non-JSON:', raw)
+      return NextResponse.json({
+        success: false,
+        error: 'Unexpected response format from models service',
+        details: raw?.slice(0, 500)
+      }, { status: 500 })
+    }
     console.log('Models API data result:', apiData.result, 'Variants count:', apiData.Variants?.length)
 
     if (apiData.result !== 0) {

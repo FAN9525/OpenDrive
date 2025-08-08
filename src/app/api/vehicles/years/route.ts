@@ -62,26 +62,35 @@ export async function GET(request: NextRequest) {
       ? 'https://www.evalue8.co.za/evalue8webservice/'
       : 'https://www.evalue8.co.za/evalue8webservice/sandbox/'
     
-    const apiUrl = `${baseUrl}${EVALUE8_ENDPOINTS.YEARS}?mmCode=${encodeURIComponent(mmCode)}&nGuide=${guide}`
+    const apiUrl = `${baseUrl}${EVALUE8_ENDPOINTS.YEARS}?mmCode=${encodeURIComponent(mmCode)}&nGuide=${guide}&datasource=TRANSUNION`
     console.log('Fetching years from:', apiUrl)
     console.log('Config environment:', config.environment, 'Using:', useEnvironment)
     console.log('mmCode parameter:', mmCode, 'Guide:', guide)
     
     const response = await fetch(apiUrl)
     console.log('Years API response status:', response.status)
-    
+
+    const raw = await response.text()
     if (!response.ok) {
-      console.log('Years API error:', response.status, response.statusText)
-      const errorText = await response.text()
-      console.log('Years API error response:', errorText)
+      console.log('Years API error:', response.status, response.statusText, raw)
       return NextResponse.json({
         success: false,
         error: `API returned ${response.status}: ${response.statusText}`,
-        details: errorText
+        details: raw
       }, { status: 500 })
     }
-    
-    const apiData = await response.json()
+
+    let apiData: { result: number; Years?: Array<{ mmYear: string | number }>; message?: string }
+    try {
+      apiData = JSON.parse(raw)
+    } catch (e) {
+      console.error('Years API returned non-JSON:', raw)
+      return NextResponse.json({
+        success: false,
+        error: 'Unexpected response format from years service',
+        details: raw?.slice(0, 500)
+      }, { status: 500 })
+    }
     console.log('Years API data result:', apiData.result, 'Years count:', apiData.Years?.length)
 
     if (apiData.result !== 0) {

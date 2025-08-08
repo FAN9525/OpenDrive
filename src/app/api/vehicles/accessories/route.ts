@@ -70,19 +70,28 @@ export async function GET(request: NextRequest) {
     
     const response = await fetch(apiUrl)
     console.log('Accessories API response status:', response.status)
-    
+
+    const raw = await response.text()
     if (!response.ok) {
-      console.log('Accessories API error:', response.status, response.statusText)
-      const errorText = await response.text()
-      console.log('Accessories API error response:', errorText)
+      console.log('Accessories API error:', response.status, response.statusText, raw)
       return NextResponse.json({
         success: false,
         error: `API returned ${response.status}: ${response.statusText}`,
-        details: errorText
+        details: raw
       }, { status: 500 })
     }
-    
-    const apiData = await response.json()
+
+    let apiData: { result: number; Optional?: unknown[]; message?: string }
+    try {
+      apiData = JSON.parse(raw)
+    } catch (e) {
+      console.error('Accessories API returned non-JSON:', raw)
+      return NextResponse.json({
+        success: false,
+        error: 'Unexpected response format from accessories service',
+        details: raw?.slice(0, 500)
+      }, { status: 500 })
+    }
     console.log('Accessories API data result:', apiData.result, 'Accessories count:', apiData.Optional?.length)
 
     if (apiData.result !== 0) {
