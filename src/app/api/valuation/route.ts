@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/utils/supabase'
 import { EVALUE8_ENDPOINTS } from '@/utils/constants'
+import { decryptPassword } from '@/utils/encryption'
 
 export async function POST(request: NextRequest) {
   try {
@@ -37,8 +38,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Build API request parameters
-    // Temporarily force live environment since sandbox returns 404
-    const useEnvironment = 'live' // Force live environment for now
+    // Temporarily force Live environment since Sandbox returns 404
+    // API expects capitalized values: "Live" | "Sandbox"
+    const useEnvironment = 'Live'
     const baseUrl = useEnvironment === 'live' 
       ? 'https://www.evalue8.co.za/evalue8webservice/'
       : 'https://www.evalue8.co.za/evalue8webservice/sandbox/'
@@ -52,7 +54,7 @@ export async function POST(request: NextRequest) {
       soft: config.app_name,
       comid: config.computer_name,
       uname: config.username,
-      password: config.password_encrypted, // Use stored password directly for now
+      password: decryptPassword(config.password_encrypted),
       clientref: config.client_ref,
       condition: condition,
       mileage: mileage,
