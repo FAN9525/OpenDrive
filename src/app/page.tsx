@@ -129,9 +129,6 @@ export default function Home() {
                 alt="OpenDrive Logo" 
                 className="h-24 w-auto"
               />
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
-                OpenDrive
-              </h1>
             </div>
             <p className="text-slate-600 mb-2 text-sm">Professional vehicle valuation system powered by eValue8</p>
             
