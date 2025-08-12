@@ -101,20 +101,26 @@ export default function ValuationResults({
   const baseRetail = parseInt(valuation.mmRetail || '0') || 0
   const baseTrade = parseInt(valuation.mmTrade || '0') || 0
 
-  const accessories = (results.selectedAccessoryDetails && results.selectedAccessoryDetails.length > 0
-    ? results.selectedAccessoryDetails
-    : (liveSelectedAccessories || []))
-  const accessoriesRetailTotal = accessories.reduce(
+  // Merge server-selected accessories (standard options) with live selections (which may include non-standard extras)
+  const serverSelected = results.selectedAccessoryDetails || []
+  const liveSelected = liveSelectedAccessories || []
+  const serverCodes = new Set(serverSelected.map((a) => a.OptionCode))
+  const mergedAccessories = [...serverSelected]
+  for (const acc of liveSelected) {
+    if (!serverCodes.has(acc.OptionCode)) {
+      mergedAccessories.push(acc)
+    }
+  }
+  const accessoriesRetailTotal = mergedAccessories.reduce(
     (sum: number, acc: { Retail: string }) => sum + parseInt(acc.Retail), 0
   )
-  const accessoriesTradeTotal = accessories.reduce(
+  const accessoriesTradeTotal = mergedAccessories.reduce(
     (sum: number, acc: { Trade: string }) => sum + parseInt(acc.Trade), 0
   )
 
-  // Prefer server-calculated totals when available (from API response), otherwise compute locally
-  const serverTotals = (results as unknown as { data?: { totals?: { retail?: number; trade?: number } } })?.data?.totals
-  const totalRetail = (serverTotals?.retail ?? (baseRetail + accessoriesRetailTotal))
-  const totalTrade = (serverTotals?.trade ?? (baseTrade + accessoriesTradeTotal))
+  // Compute totals locally from base + merged accessories to ensure non-standard extras are included
+  const totalRetail = baseRetail + accessoriesRetailTotal
+  const totalTrade = baseTrade + accessoriesTradeTotal
 
   return (
     <div className="bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-xl">
@@ -156,7 +162,7 @@ export default function ValuationResults({
       </div>
 
       {/* Accessories Section */}
-      {accessories.length > 0 && (
+      {mergedAccessories.length > 0 && (
         <div className="mb-6">
           <div className="bg-slate-50 border border-slate-200 p-3 rounded text-center mb-3">
             <h4 className="text-slate-600 font-medium mb-1">Accessories Value</h4>
@@ -192,7 +198,7 @@ export default function ValuationResults({
               🔧 Selected Accessories ({accessories.length}):
             </h4>
             <div className="bg-slate-50 rounded p-3 space-y-2">
-              {accessories.map((acc) => (
+              {mergedAccessories.map((acc) => (
                 <div 
                   key={acc.OptionCode} 
                   className="flex justify-between items-center py-2 border-b border-slate-200 last:border-b-0"

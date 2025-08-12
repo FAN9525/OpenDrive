@@ -72,6 +72,10 @@ export default function AccessorySelector({
     })
   }
 
+  const removeAccessory = (optionCode: string) => {
+    setSelectedAccessories(prev => prev.filter(acc => acc.OptionCode === optionCode ? false : true))
+  }
+
   const isSelected = (accessory: Accessory) => {
     return selectedAccessories.some(acc => acc.OptionCode === accessory.OptionCode)
   }
@@ -135,6 +139,13 @@ export default function AccessorySelector({
                 <span className="font-medium text-slate-800">
                   R{parseInt(acc.Retail).toLocaleString()}
                 </span>
+                <button
+                  type="button"
+                  onClick={() => removeAccessory(acc.OptionCode)}
+                  className="ml-3 text-slate-600 hover:text-red-600 text-xs underline"
+                >
+                  Remove
+                </button>
               </div>
             ))}
           </div>
