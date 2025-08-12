@@ -217,7 +217,7 @@ export default function ValuationResults({
       )}
 
       {/* No Accessories Message */}
-      {accessories.length === 0 && (
+      {mergedAccessories.length === 0 && (
         <div className="bg-slate-50 border border-slate-200 p-4 rounded-lg text-center text-slate-600">
           💡 No accessories selected. Add accessories to increase the vehicle value.
         </div>
