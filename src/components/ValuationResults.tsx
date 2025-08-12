@@ -195,7 +195,7 @@ export default function ValuationResults({
           {/* Selected Accessories List */}
           <div className="mt-4">
             <h4 className="font-medium text-slate-800 mb-3">
-              🔧 Selected Accessories ({accessories.length}):
+              🔧 Selected Accessories ({mergedAccessories.length}):
             </h4>
             <div className="bg-slate-50 rounded p-3 space-y-2">
               {mergedAccessories.map((acc) => (
