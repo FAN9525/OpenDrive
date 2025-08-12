@@ -130,7 +130,7 @@ export default function Home() {
                 className="h-24 w-auto"
               />
             </div>
-            <p className="text-slate-600 mb-2 text-sm">Professional vehicle valuation system powered by eValue8</p>
+            <p className="text-slate-600 mb-2 text-sm">Professional vehicle valuation system powered by Open Door Software</p>
             
             {/* Center navigation buttons removed to save space; use top-right Admin button */}
           </div>
