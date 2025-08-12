@@ -77,8 +77,8 @@ export default function AccessorySelector({
   }
 
   const getTotalValue = () => {
-    const retail = selectedAccessories.reduce((sum, acc) => sum + parseInt(acc.Retail), 0)
-    const trade = selectedAccessories.reduce((sum, acc) => sum + parseInt(acc.Trade), 0)
+    const retail = selectedAccessories.reduce((sum, acc) => sum + (parseInt(acc.Retail) || 0), 0)
+    const trade = selectedAccessories.reduce((sum, acc) => sum + (parseInt(acc.Trade) || 0), 0)
     return { retail, trade }
   }
 

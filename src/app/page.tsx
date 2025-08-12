@@ -154,6 +154,7 @@ export default function Home() {
               <ValuationResults 
                 results={valuationResults}
                 isLoading={valuationLoading}
+                selectedAccessories={selectedAccessories}
               />
             </div>
 

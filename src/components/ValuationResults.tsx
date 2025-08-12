@@ -26,8 +26,9 @@ interface ValuationResultsProps {
 
 export default function ValuationResults({ 
   results, 
-  isLoading = false 
-}: ValuationResultsProps) {
+  isLoading = false,
+  selectedAccessories: liveSelectedAccessories
+}: ValuationResultsProps & { selectedAccessories?: Array<{ OptionCode: string; Description: string; Retail: string; Trade: string }> }) {
   if (isLoading) {
     return (
       <div className="bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-xl">
@@ -100,7 +101,9 @@ export default function ValuationResults({
   const baseRetail = parseInt(valuation.mmRetail || '0') || 0
   const baseTrade = parseInt(valuation.mmTrade || '0') || 0
 
-  const accessories = results.selectedAccessoryDetails || []
+  const accessories = (results.selectedAccessoryDetails && results.selectedAccessoryDetails.length > 0
+    ? results.selectedAccessoryDetails
+    : (liveSelectedAccessories || []))
   const accessoriesRetailTotal = accessories.reduce(
     (sum: number, acc: { Retail: string }) => sum + parseInt(acc.Retail), 0
   )
@@ -108,8 +111,10 @@ export default function ValuationResults({
     (sum: number, acc: { Trade: string }) => sum + parseInt(acc.Trade), 0
   )
 
-  const totalRetail = baseRetail + accessoriesRetailTotal
-  const totalTrade = baseTrade + accessoriesTradeTotal
+  // Prefer server-calculated totals when available (from API response), otherwise compute locally
+  const serverTotals = (results as unknown as { data?: { totals?: { retail?: number; trade?: number } } })?.data?.totals
+  const totalRetail = (serverTotals?.retail ?? (baseRetail + accessoriesRetailTotal))
+  const totalTrade = (serverTotals?.trade ?? (baseTrade + accessoriesTradeTotal))
 
   return (
     <div className="bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-xl">
