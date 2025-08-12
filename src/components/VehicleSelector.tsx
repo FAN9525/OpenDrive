@@ -241,6 +241,15 @@ export default function VehicleSelector({ apiConfig, onGetValuation, isLoading: 
             className="w-full p-2.5 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none transition-colors text-sm"
             disabled={loading || (searchMode === 'make-model' && !selectedModel)}
           >
+            <option value="">Select model first...</option>
+            {years.map((year) => (
+              <option key={year.mmYear} value={year.mmYear}>
+                {year.mmYear}
+              </option>
+            ))}
+          </select>
+        </div>
+
         {/* M&M Code and VIN inputs (enabled per mode) */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
@@ -283,14 +292,6 @@ export default function VehicleSelector({ apiConfig, onGetValuation, isLoading: 
               </button>
             )}
           </div>
-        </div>
-            <option value="">Select model first...</option>
-            {years.map((year) => (
-              <option key={year.mmYear} value={year.mmYear}>
-                {year.mmYear}
-              </option>
-            ))}
-          </select>
         </div>
 
         {/* Vehicle Condition + Mileage Category inline */}
