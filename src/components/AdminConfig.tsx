@@ -14,6 +14,18 @@ export default function AdminConfig({ apiConfig, setApiConfig, onBack }: AdminCo
   const [testing, setTesting] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
+  // Admin: Companies and Users state
+  type Company = { id: string; name: string }
+  type Role = 'Broker' | 'Client' | 'Insurer' | 'UMA' | 'Assessor' | 'Service Provider'
+  const ROLES: Role[] = ['Broker', 'Client', 'Insurer', 'UMA', 'Assessor', 'Service Provider']
+  const [companies, setCompanies] = useState<Company[]>([])
+  const [newCompanyName, setNewCompanyName] = useState('')
+  const [inviteEmail, setInviteEmail] = useState('')
+  const [inviteFullName, setInviteFullName] = useState('')
+  const [inviteRole, setInviteRole] = useState<Role>('Broker')
+  const [inviteCompanyId, setInviteCompanyId] = useState<string>('')
+  const [adminBusy, setAdminBusy] = useState(false)
+
   useEffect(() => {
     // Load configuration from localStorage on mount
     const saved = localStorage.getItem('opendrive_config')
@@ -27,6 +39,22 @@ export default function AdminConfig({ apiConfig, setApiConfig, onBack }: AdminCo
       }
     }
   }, [setApiConfig])
+
+  // Load companies for Admin section
+  useEffect(() => {
+    const loadCompanies = async () => {
+      try {
+        const res = await fetch('/api/admin/companies')
+        const data = await res.json()
+        if (data.success) {
+          setCompanies(data.data as Company[])
+        }
+      } catch (e) {
+        // Ignore
+      }
+    }
+    void loadCompanies()
+  }, [])
 
   const handleInputChange = (field: keyof ApiConfiguration, value: string | boolean) => {
     setFormData(prev => ({
@@ -146,6 +174,58 @@ export default function AdminConfig({ apiConfig, setApiConfig, onBack }: AdminCo
       console.error('Connection test error:', error)
     } finally {
       setTesting(false)
+    }
+  }
+
+  const createCompany = async () => {
+    if (!newCompanyName.trim()) return
+    setAdminBusy(true)
+    try {
+      const res = await fetch('/api/admin/companies', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: newCompanyName.trim() })
+      })
+      const data = await res.json()
+      if (data.success) {
+        setCompanies(prev => [...prev, data.data as Company])
+        setNewCompanyName('')
+      } else {
+        setMessage({ type: 'error', text: data.error || 'Failed to create company' })
+      }
+    } catch (e) {
+      setMessage({ type: 'error', text: 'Failed to create company' })
+    } finally {
+      setAdminBusy(false)
+    }
+  }
+
+  const inviteUser = async () => {
+    if (!inviteEmail || !inviteFullName || !inviteCompanyId) {
+      setMessage({ type: 'error', text: 'Please enter email, full name and select a company' })
+      return
+    }
+    setAdminBusy(true)
+    try {
+      const res = await fetch('/api/admin/users/invite', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: inviteEmail, fullName: inviteFullName, role: inviteRole, companyId: inviteCompanyId })
+      })
+      const data = await res.json()
+      if (data.success) {
+        setMessage({ type: 'success', text: `Invitation sent to ${inviteEmail}` })
+        setInviteEmail('')
+        setInviteFullName('')
+        setInviteRole('Broker')
+        setInviteCompanyId('')
+      } else {
+        setMessage({ type: 'error', text: data.error || 'Failed to invite user' })
+      }
+    } catch (e) {
+      setMessage({ type: 'error', text: 'Failed to invite user' })
+    } finally {
+      setAdminBusy(false)
     }
   }
 
@@ -323,6 +403,103 @@ export default function AdminConfig({ apiConfig, setApiConfig, onBack }: AdminCo
             {message.text}
           </div>
         )}
+      </div>
+
+      {/* Admin: Companies and Users */}
+      <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 shadow-xl mt-6">
+        <h2 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">🏢 Companies & 👤 Users</h2>
+
+        {/* Companies section */}
+        <div className="mb-8">
+          <h3 className="text-lg font-semibold text-slate-800 mb-3">Companies</h3>
+          <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-end">
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-slate-700 mb-2">Company Name</label>
+              <input
+                type="text"
+                value={newCompanyName}
+                onChange={(e) => setNewCompanyName(e.target.value)}
+                placeholder="e.g. Open Door Software"
+                className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none"
+              />
+            </div>
+            <button
+              onClick={createCompany}
+              disabled={adminBusy}
+              className="md:w-48 bg-slate-700 text-white py-3 px-4 rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50"
+            >
+              Add Company
+            </button>
+          </div>
+          {companies.length > 0 && (
+            <ul className="mt-3 text-sm text-slate-700 list-disc pl-5">
+              {companies.map(c => (
+                <li key={c.id}>{c.name}</li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        {/* Invite Users section */}
+        <div>
+          <h3 className="text-lg font-semibold text-slate-800 mb-3">Invite User</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">Email</label>
+              <input
+                type="email"
+                value={inviteEmail}
+                onChange={(e) => setInviteEmail(e.target.value)}
+                placeholder="user@example.com"
+                className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">Full Name</label>
+              <input
+                type="text"
+                value={inviteFullName}
+                onChange={(e) => setInviteFullName(e.target.value)}
+                placeholder="First Last"
+                className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">Role</label>
+              <select
+                value={inviteRole}
+                onChange={(e) => setInviteRole(e.target.value as Role)}
+                className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none"
+              >
+                {ROLES.map(r => (
+                  <option key={r} value={r}>{r}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">Company</label>
+              <select
+                value={inviteCompanyId}
+                onChange={(e) => setInviteCompanyId(e.target.value)}
+                className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none"
+              >
+                <option value="">Select company...</option>
+                {companies.map(c => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <div className="mt-4">
+            <button
+              onClick={inviteUser}
+              disabled={adminBusy}
+              className="bg-slate-700 text-white py-3 px-4 rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50"
+            >
+              Send Invite
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   )
