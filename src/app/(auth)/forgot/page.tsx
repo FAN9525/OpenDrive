@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { supabase } from '@/utils/supabase'
 
 export default function ForgotPage() {
   const [email, setEmail] = useState('')
@@ -12,16 +13,15 @@ export default function ForgotPage() {
     setLoading(true)
     setMessage(null)
     try {
-      const res = await fetch('/api/auth/forgot', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
-      })
-      const data = await res.json()
-      if (data.success) {
-        setMessage('If the email exists, a reset link was sent.')
+      if (!supabase) {
+        setMessage('Supabase not configured')
+        return
+      }
+      const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: typeof window !== 'undefined' ? `${window.location.origin}/login` : undefined })
+      if (error) {
+        setMessage(error.message)
       } else {
-        setMessage(data.error || 'Failed to request reset')
+        setMessage('If the email exists, a reset link was sent.')
       }
     } catch {
       setMessage('Failed to request reset')

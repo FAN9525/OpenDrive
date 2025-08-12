@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { supabase } from '@/utils/supabase'
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('')
@@ -14,16 +15,15 @@ export default function RegisterPage() {
     setLoading(true)
     setMessage(null)
     try {
-      const res = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, fullName })
-      })
-      const data = await res.json()
-      if (data.success) {
-        window.location.href = '/login'
+      if (!supabase) {
+        setMessage('Supabase not configured')
+        return
+      }
+      const { data: signUpData, error } = await supabase.auth.signUp({ email, password, options: { data: { full_name: fullName } } })
+      if (error) {
+        setMessage(error.message)
       } else {
-        setMessage(data.error || 'Registration failed')
+        setMessage('Check your email to confirm your account')
       }
     } catch {
       setMessage('Registration failed')

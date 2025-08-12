@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { supabase } from '@/utils/supabase'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -13,16 +14,15 @@ export default function LoginPage() {
     setLoading(true)
     setMessage(null)
     try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      })
-      const data = await res.json()
-      if (data.success) {
-        window.location.href = '/'
+      if (!supabase) {
+        setMessage('Supabase not configured')
+        return
+      }
+      const { error } = await supabase.auth.signInWithPassword({ email, password })
+      if (error) {
+        setMessage(error.message)
       } else {
-        setMessage(data.error || 'Login failed')
+        window.location.href = '/'
       }
     } catch {
       setMessage('Login failed')
