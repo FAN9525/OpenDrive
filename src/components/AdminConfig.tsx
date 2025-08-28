@@ -216,7 +216,7 @@ export default function AdminConfig({ apiConfig, setApiConfig, onBack }: AdminCo
               value={formData.appName}
               onChange={(e) => handleInputChange('appName', e.target.value)}
               placeholder="Your registered application name"
-              className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none transition-colors"
+              className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none transition-colors bg-white text-black placeholder-gray-400"
             />
             <small className="text-slate-500">This must be registered with Imagin8</small>
           </div>
@@ -232,7 +232,7 @@ export default function AdminConfig({ apiConfig, setApiConfig, onBack }: AdminCo
               value={formData.username}
               onChange={(e) => handleInputChange('username', e.target.value)}
               placeholder="Your eValue8 username"
-              className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none transition-colors"
+              className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none transition-colors bg-white text-black placeholder-gray-400"
             />
           </div>
 
@@ -247,7 +247,7 @@ export default function AdminConfig({ apiConfig, setApiConfig, onBack }: AdminCo
               value={formData.password}
               onChange={(e) => handleInputChange('password', e.target.value)}
               placeholder="Your eValue8 password"
-              className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none transition-colors"
+              className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none transition-colors bg-white text-black placeholder-gray-400"
             />
           </div>
 
@@ -262,7 +262,7 @@ export default function AdminConfig({ apiConfig, setApiConfig, onBack }: AdminCo
               value={formData.clientRef}
               onChange={(e) => handleInputChange('clientRef', e.target.value)}
               placeholder="Your unique client reference"
-              className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none transition-colors"
+              className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none transition-colors bg-white text-black placeholder-gray-400"
             />
             <small className="text-slate-500">Obtain this from the eValue8 Broker Application</small>
           </div>
@@ -278,7 +278,7 @@ export default function AdminConfig({ apiConfig, setApiConfig, onBack }: AdminCo
               value={formData.computerName}
               onChange={(e) => handleInputChange('computerName', e.target.value)}
               placeholder="Identifier for this workstation"
-              className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none transition-colors"
+              className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-slate-500 focus:outline-none transition-colors bg-white text-black placeholder-gray-400"
             />
           </div>
         </div>
