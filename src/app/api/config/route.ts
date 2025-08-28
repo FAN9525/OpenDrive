@@ -4,10 +4,16 @@ import { encryptPassword } from '@/utils/encryption'
 
 export async function GET() {
   try {
+    console.log('Config GET - Environment check:', {
+      supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL ? 'Set' : 'Missing',
+      supabaseServiceKey: process.env.SUPABASE_SERVICE_ROLE_KEY ? 'Set' : 'Missing',
+      supabaseClient: supabase ? 'Initialized' : 'Not initialized'
+    })
+
     if (!supabase) {
       return NextResponse.json({
         success: false,
-        error: 'Database connection not available'
+        error: 'Database connection not available - Supabase client not initialized'
       }, { status: 500 })
     }
 
@@ -40,10 +46,16 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    console.log('Config POST - Environment check:', {
+      supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL ? 'Set' : 'Missing',
+      supabaseServiceKey: process.env.SUPABASE_SERVICE_ROLE_KEY ? 'Set' : 'Missing',
+      supabaseClient: supabase ? 'Initialized' : 'Not initialized'
+    })
+
     if (!supabase) {
       return NextResponse.json({
         success: false,
-        error: 'Database connection not available'
+        error: 'Database connection not available - Supabase client not initialized'
       }, { status: 500 })
     }
 
