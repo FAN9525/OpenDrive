@@ -50,17 +50,46 @@ export default function Home() {
   const [valuationLoading, setValuationLoading] = useState(false)
   const [selectedAccessories, setSelectedAccessories] = useState<Array<{ OptionCode: string; Description: string; Retail: string; Trade: string }>>([])
 
-  // Load configuration from localStorage on component mount
+  // Load configuration from database and localStorage on component mount
   useEffect(() => {
-    const savedConfig = localStorage.getItem('opendrive_config')
-    if (savedConfig) {
+    const loadConfig = async () => {
+      // First try to load from database
       try {
-        const parsedConfig = JSON.parse(savedConfig)
-        setApiConfig(parsedConfig)
+        const response = await fetch('/api/config')
+        const data = await response.json()
+        
+        if (data.success && data.data) {
+          const dbConfig = {
+            appName: data.data.app_name,
+            username: data.data.username,
+            clientRef: data.data.client_ref,
+            computerName: data.data.computer_name,
+            environment: data.data.environment,
+            configured: true,
+            password: '' // Don't store password in frontend
+          }
+          setApiConfig(dbConfig)
+          // Also save to localStorage for faster future loads
+          localStorage.setItem('opendrive_config', JSON.stringify(dbConfig))
+          return
+        }
       } catch (error) {
-        console.error('Error parsing saved config:', error)
+        console.error('Error loading config from database:', error)
+      }
+      
+      // Fallback to localStorage if database fails
+      const savedConfig = localStorage.getItem('opendrive_config')
+      if (savedConfig) {
+        try {
+          const parsedConfig = JSON.parse(savedConfig)
+          setApiConfig(parsedConfig)
+        } catch (error) {
+          console.error('Error parsing saved config:', error)
+        }
       }
     }
+    
+    loadConfig()
   }, [])
 
   // Handle vehicle valuation
